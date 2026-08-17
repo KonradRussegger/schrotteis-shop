@@ -6,22 +6,34 @@ export async function POST(request) {
   const { variantId, quantity, customer, shippingAddress } = await request.json();
   const supabase = supabaseAdmin();
 
-  // 1. Variante inkl. zugehörigem Produkt laden (Preis kommt aus der DB, nie
-  //    vom Client — sonst könnte der Preis im Browser manipuliert werden)
+  // 1. Variante und zugehöriges Produkt getrennt laden und zusammenführen
+  //    (siehe Kommentar in app/admin/page.jsx zum Embedding-Problem).
+  //    Preis kommt aus der DB, nie vom Client — sonst könnte der Preis im
+  //    Browser manipuliert werden.
   const { data: variant, error: variantError } = await supabase
     .from("product_variants")
-    .select("*, products(*)")
+    .select("*")
     .eq("id", variantId)
     .single();
 
   if (variantError || !variant) {
     return NextResponse.json({ error: "Farbvariante nicht gefunden." }, { status: 404 });
   }
+
+  const { data: product, error: productError } = await supabase
+    .from("products")
+    .select("*")
+    .eq("id", variant.product_id)
+    .single();
+
+  if (productError || !product) {
+    return NextResponse.json({ error: "Produkt nicht gefunden." }, { status: 404 });
+  }
+
   if (variant.stock_quantity < quantity) {
     return NextResponse.json({ error: "Nicht genug Lagerbestand." }, { status: 400 });
   }
 
-  const product = variant.products;
   const totalCents = product.price_cents * quantity;
 
   // 2. Bestellung mit Status "open" anlegen

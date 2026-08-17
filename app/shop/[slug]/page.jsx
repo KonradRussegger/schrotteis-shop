@@ -2,15 +2,25 @@ import { supabasePublic } from "@/lib/supabase";
 import { notFound } from "next/navigation";
 import ProductDetail from "@/components/ProductDetail";
 
+// Produkt und Farbvarianten getrennt abgefragt und zusammengeführt (siehe
+// Kommentar in app/admin/page.jsx) statt PostgREST-Embedding.
 async function getProduct(slug) {
   const supabase = supabasePublic();
-  const { data } = await supabase
+  const { data: product } = await supabase
     .from("products")
-    .select("*, product_variants(*)")
+    .select("*")
     .eq("slug", slug)
     .eq("is_active", true)
     .single();
-  return data;
+
+  if (!product) return null;
+
+  const { data: variants } = await supabase
+    .from("product_variants")
+    .select("*")
+    .eq("product_id", product.id);
+
+  return { ...product, product_variants: variants || [] };
 }
 
 export default async function ProductPage({ params }) {

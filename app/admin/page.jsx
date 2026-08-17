@@ -3,43 +3,34 @@ import { supabaseAdmin } from "@/lib/supabase";
 
 export const dynamic = "force-dynamic"; // immer aktuelle Daten im Admin-Bereich
 
+// Produkte und Farbvarianten bewusst getrennt abgefragt und in JS
+// zusammengeführt, statt PostgREST-Embedding (product_variants(*)) zu
+// nutzen — bei diesem Projekt lieferte die eingebettete Abfrage trotz
+// vorhandener Daten und ohne Fehlermeldung leere Ergebnisse zurück.
 async function getData() {
   const supabase = supabaseAdmin();
-  const { data: categories, error: catError } = await supabase
+  const { data: categories } = await supabase
     .from("categories")
     .select("*")
     .order("sort_order");
-  const { data: products, error: prodError } = await supabase
+  const { data: products } = await supabase
     .from("products")
-    .select("*, product_variants(*)")
+    .select("*")
     .order("created_at");
-
-  // TEMPORÄRE ZUSATZ-DIAGNOSE: ganz einfache Abfrage ohne Verknüpfung,
-  // um zu prüfen, ob das Problem am product_variants-Join liegt.
-  const { data: simpleProducts, error: simpleError } = await supabase
-    .from("products")
-    .select("id, name");
-
-  // TEMPORÄRE DIAGNOSE 3: existieren überhaupt Zeilen in product_variants?
-  const { data: rawVariants, error: variantsError } = await supabase
+  const { data: variants } = await supabase
     .from("product_variants")
-    .select("id, product_id, color_name");
+    .select("*");
 
-  return {
-    categories: categories || [],
-    products: products || [],
-    error: catError?.message || prodError?.message || null,
-    prodErrorRaw: JSON.stringify(prodError),
-    simpleCount: simpleProducts?.length ?? "FEHLER",
-    simpleError: simpleError?.message || null,
-    rawVariantsCount: rawVariants?.length ?? "FEHLER",
-    rawVariantsError: variantsError?.message || null,
-    rawVariantsSample: JSON.stringify(rawVariants?.slice(0, 2) || []),
-  };
+  const productsWithVariants = (products || []).map((p) => ({
+    ...p,
+    product_variants: (variants || []).filter((v) => v.product_id === p.id),
+  }));
+
+  return { categories: categories || [], products: productsWithVariants };
 }
 
 export default async function AdminPage() {
-  const { categories, products, error, simpleCount, simpleError, rawVariantsCount, rawVariantsError, rawVariantsSample, prodErrorRaw } = await getData();
+  const { categories, products } = await getData();
 
   return (
     <main className="px-6 md:px-12 py-16">
@@ -50,31 +41,6 @@ export default async function AdminPage() {
           <Link href="/admin/orders" className="hover:text-tanLight">Bestellübersicht →</Link>
           <Link href="/admin/kategorien" className="hover:text-tanLight">Kategorien verwalten →</Link>
         </div>
-      </div>
-
-      {error && (
-        <div className="border border-red-900 bg-red-950/40 rounded-sm px-4 py-3 mb-8 font-mono text-xs text-red-300">
-          Verbindung zu Supabase fehlgeschlagen: {error}
-          <br />
-          Vermutlich stimmt SUPABASE_URL oder SUPABASE_SERVICE_ROLE_KEY in den Vercel-Umgebungsvariablen nicht.
-        </div>
-      )}
-
-      {/* TEMPORÄRE DIAGNOSE — danach wieder entfernen */}
-      <div className="border border-amber-700 bg-amber-950/30 rounded-sm px-4 py-3 mb-8 font-mono text-xs text-amber-300">
-        DIAGNOSE: {products.length} Produkte gefunden (mit Varianten-Join), {categories.length} Kategorien gefunden.
-        <br />
-        Rohes Fehlerobjekt beim Join: {prodErrorRaw}
-        <br />
-        DIAGNOSE 2: {simpleCount} Produkte gefunden (OHNE Join). {simpleError && `Fehler: ${simpleError}`}
-        <br />
-        DIAGNOSE 3: {rawVariantsCount} Farbvarianten-Zeilen insgesamt in der Tabelle. {rawVariantsError && `Fehler: ${rawVariantsError}`}
-        <br />
-        Beispiel: {rawVariantsSample}
-        <br />
-        SUPABASE_URL beginnt mit: {(process.env.SUPABASE_URL || "NICHT GESETZT").slice(0, 30)}
-        <br />
-        SERVICE_ROLE_KEY Länge: {(process.env.SUPABASE_SERVICE_ROLE_KEY || "").length} Zeichen
       </div>
 
       <table className="w-full text-sm">
@@ -132,13 +98,6 @@ export default async function AdminPage() {
           Noch keine Produkte vorhanden.
         </p>
       )}
-
-      {/*
-        TODO nächster Schritt: Formular zum Anlegen/Bearbeiten eines Produkts
-        inkl. mehrerer Farbvarianten und Foto-Upload je Farbe nach Supabase
-        Storage. Aktuell bewusst nur die Übersicht, damit die Datenstruktur
-        zuerst steht.
-      */}
     </main>
   );
 }

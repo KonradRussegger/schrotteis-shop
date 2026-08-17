@@ -4,15 +4,25 @@ import ProductForm from "@/components/ProductForm";
 
 export const dynamic = "force-dynamic";
 
+// Produkt und Farbvarianten getrennt abgefragt und zusammengeführt (siehe
+// Kommentar in app/admin/page.jsx) statt PostgREST-Embedding.
 async function getData(id) {
   const supabase = supabaseAdmin();
   const { data: product } = await supabase
     .from("products")
-    .select("*, product_variants(*)")
+    .select("*")
     .eq("id", id)
     .single();
+
+  if (!product) return { product: null, categories: [] };
+
+  const { data: variants } = await supabase
+    .from("product_variants")
+    .select("*")
+    .eq("product_id", id);
+
   const { data: categories } = await supabase.from("categories").select("*").order("sort_order");
-  return { product, categories: categories || [] };
+  return { product: { ...product, product_variants: variants || [] }, categories: categories || [] };
 }
 
 export default async function BearbeitenPage({ params }) {

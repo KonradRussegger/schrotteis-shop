@@ -3,6 +3,8 @@ import { supabasePublic } from "@/lib/supabase";
 
 export const revalidate = 60; // Katalog alle 60s neu aus Supabase laden
 
+// Produkte und Farbvarianten getrennt abgefragt und zusammengeführt (siehe
+// Kommentar in app/admin/page.jsx) statt PostgREST-Embedding.
 async function getProductsByCategory() {
   const supabase = supabasePublic();
 
@@ -13,7 +15,7 @@ async function getProductsByCategory() {
 
   const { data: products, error } = await supabase
     .from("products")
-    .select("*, product_variants(*)")
+    .select("*")
     .eq("is_active", true)
     .order("created_at", { ascending: true });
 
@@ -21,7 +23,15 @@ async function getProductsByCategory() {
     console.error("Fehler beim Laden der Produkte:", error);
     return { categories: categories || [], products: [] };
   }
-  return { categories: categories || [], products: products || [] };
+
+  const { data: variants } = await supabase.from("product_variants").select("*");
+
+  const productsWithVariants = (products || []).map((p) => ({
+    ...p,
+    product_variants: (variants || []).filter((v) => v.product_id === p.id),
+  }));
+
+  return { categories: categories || [], products: productsWithVariants };
 }
 
 export default async function ShopPage() {
