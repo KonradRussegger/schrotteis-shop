@@ -29,6 +29,7 @@ async function getData() {
     categories: categories || [],
     products: products || [],
     error: catError?.message || prodError?.message || null,
+    prodErrorRaw: JSON.stringify(prodError),
     simpleCount: simpleProducts?.length ?? "FEHLER",
     simpleError: simpleError?.message || null,
     rawVariantsCount: rawVariants?.length ?? "FEHLER",
@@ -38,7 +39,7 @@ async function getData() {
 }
 
 export default async function AdminPage() {
-  const { categories, products, error, simpleCount, simpleError, rawVariantsCount, rawVariantsError, rawVariantsSample } = await getData();
+  const { categories, products, error, simpleCount, simpleError, rawVariantsCount, rawVariantsError, rawVariantsSample, prodErrorRaw } = await getData();
 
   return (
     <main className="px-6 md:px-12 py-16">
@@ -62,6 +63,8 @@ export default async function AdminPage() {
       {/* TEMPORÄRE DIAGNOSE — danach wieder entfernen */}
       <div className="border border-amber-700 bg-amber-950/30 rounded-sm px-4 py-3 mb-8 font-mono text-xs text-amber-300">
         DIAGNOSE: {products.length} Produkte gefunden (mit Varianten-Join), {categories.length} Kategorien gefunden.
+        <br />
+        Rohes Fehlerobjekt beim Join: {prodErrorRaw}
         <br />
         DIAGNOSE 2: {simpleCount} Produkte gefunden (OHNE Join). {simpleError && `Fehler: ${simpleError}`}
         <br />
