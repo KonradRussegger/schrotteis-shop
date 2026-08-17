@@ -42,6 +42,15 @@ export default async function AdminPage() {
         </div>
       )}
 
+      {/* TEMPORÄRE DIAGNOSE — danach wieder entfernen */}
+      <div className="border border-amber-700 bg-amber-950/30 rounded-sm px-4 py-3 mb-8 font-mono text-xs text-amber-300">
+        DIAGNOSE: {products.length} Produkte gefunden, {categories.length} Kategorien gefunden.
+        <br />
+        SUPABASE_URL beginnt mit: {(process.env.SUPABASE_URL || "NICHT GESETZT").slice(0, 30)}
+        <br />
+        SERVICE_ROLE_KEY Länge: {(process.env.SUPABASE_SERVICE_ROLE_KEY || "").length} Zeichen
+      </div>
+
       <table className="w-full text-sm">
         <thead>
           <tr className="text-left text-muted font-mono text-xs border-b border-line">
