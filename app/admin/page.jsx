@@ -13,15 +13,24 @@ async function getData() {
     .from("products")
     .select("*, product_variants(*)")
     .order("created_at");
+
+  // TEMPORÄRE ZUSATZ-DIAGNOSE: ganz einfache Abfrage ohne Verknüpfung,
+  // um zu prüfen, ob das Problem am product_variants-Join liegt.
+  const { data: simpleProducts, error: simpleError } = await supabase
+    .from("products")
+    .select("id, name");
+
   return {
     categories: categories || [],
     products: products || [],
     error: catError?.message || prodError?.message || null,
+    simpleCount: simpleProducts?.length ?? "FEHLER",
+    simpleError: simpleError?.message || null,
   };
 }
 
 export default async function AdminPage() {
-  const { categories, products, error } = await getData();
+  const { categories, products, error, simpleCount, simpleError } = await getData();
 
   return (
     <main className="px-6 md:px-12 py-16">
@@ -44,7 +53,9 @@ export default async function AdminPage() {
 
       {/* TEMPORÄRE DIAGNOSE — danach wieder entfernen */}
       <div className="border border-amber-700 bg-amber-950/30 rounded-sm px-4 py-3 mb-8 font-mono text-xs text-amber-300">
-        DIAGNOSE: {products.length} Produkte gefunden, {categories.length} Kategorien gefunden.
+        DIAGNOSE: {products.length} Produkte gefunden (mit Varianten-Join), {categories.length} Kategorien gefunden.
+        <br />
+        DIAGNOSE 2: {simpleCount} Produkte gefunden (OHNE Join). {simpleError && `Fehler: ${simpleError}`}
         <br />
         SUPABASE_URL beginnt mit: {(process.env.SUPABASE_URL || "NICHT GESETZT").slice(0, 30)}
         <br />
