@@ -20,17 +20,25 @@ async function getData() {
     .from("products")
     .select("id, name");
 
+  // TEMPORÄRE DIAGNOSE 3: existieren überhaupt Zeilen in product_variants?
+  const { data: rawVariants, error: variantsError } = await supabase
+    .from("product_variants")
+    .select("id, product_id, color_name");
+
   return {
     categories: categories || [],
     products: products || [],
     error: catError?.message || prodError?.message || null,
     simpleCount: simpleProducts?.length ?? "FEHLER",
     simpleError: simpleError?.message || null,
+    rawVariantsCount: rawVariants?.length ?? "FEHLER",
+    rawVariantsError: variantsError?.message || null,
+    rawVariantsSample: JSON.stringify(rawVariants?.slice(0, 2) || []),
   };
 }
 
 export default async function AdminPage() {
-  const { categories, products, error, simpleCount, simpleError } = await getData();
+  const { categories, products, error, simpleCount, simpleError, rawVariantsCount, rawVariantsError, rawVariantsSample } = await getData();
 
   return (
     <main className="px-6 md:px-12 py-16">
@@ -56,6 +64,10 @@ export default async function AdminPage() {
         DIAGNOSE: {products.length} Produkte gefunden (mit Varianten-Join), {categories.length} Kategorien gefunden.
         <br />
         DIAGNOSE 2: {simpleCount} Produkte gefunden (OHNE Join). {simpleError && `Fehler: ${simpleError}`}
+        <br />
+        DIAGNOSE 3: {rawVariantsCount} Farbvarianten-Zeilen insgesamt in der Tabelle. {rawVariantsError && `Fehler: ${rawVariantsError}`}
+        <br />
+        Beispiel: {rawVariantsSample}
         <br />
         SUPABASE_URL beginnt mit: {(process.env.SUPABASE_URL || "NICHT GESETZT").slice(0, 30)}
         <br />
