@@ -47,6 +47,8 @@ export async function PUT(request, { params }) {
     await supabase.from("product_variants").delete().in("id", toDelete);
   }
 
+  const variantErrors = [];
+
   for (const v of variants) {
     const row = {
       product_id: id,
@@ -58,10 +60,19 @@ export async function PUT(request, { params }) {
     };
 
     if (v.id) {
-      await supabase.from("product_variants").update(row).eq("id", v.id);
+      const { error } = await supabase.from("product_variants").update(row).eq("id", v.id);
+      if (error) variantErrors.push(`${v.colorName} (Update): ${error.message}`);
     } else {
-      await supabase.from("product_variants").insert(row);
+      const { error } = await supabase.from("product_variants").insert(row);
+      if (error) variantErrors.push(`${v.colorName} (Neu): ${error.message}`);
     }
+  }
+
+  if (variantErrors.length > 0) {
+    return NextResponse.json(
+      { error: "Farbvarianten teilweise nicht gespeichert: " + variantErrors.join("; ") },
+      { status: 500 }
+    );
   }
 
   return NextResponse.json({ ok: true });

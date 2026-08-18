@@ -58,6 +58,7 @@ export default function ProductForm({ categories, initialProduct }) {
   async function handlePhotoUpload(index, files) {
     updateVariant(index, { uploading: true });
     const uploadedUrls = [];
+    const failedFiles = [];
 
     for (const file of files) {
       let uploadFile;
@@ -69,10 +70,17 @@ export default function ProductForm({ categories, initialProduct }) {
 
       const formData = new FormData();
       formData.append("file", uploadFile);
-      const res = await fetch("/api/admin/upload", { method: "POST", body: formData });
-      if (res.ok) {
-        const { url } = await res.json();
-        uploadedUrls.push(url);
+      try {
+        const res = await fetch("/api/admin/upload", { method: "POST", body: formData });
+        if (res.ok) {
+          const { url } = await res.json();
+          uploadedUrls.push(url);
+        } else {
+          const body = await res.json().catch(() => ({}));
+          failedFiles.push(`${file.name}: ${body.error || "Upload fehlgeschlagen"}`);
+        }
+      } catch (err) {
+        failedFiles.push(`${file.name}: ${err.message}`);
       }
     }
 
@@ -81,6 +89,10 @@ export default function ProductForm({ categories, initialProduct }) {
         i === index ? { ...v, images: [...v.images, ...uploadedUrls], uploading: false } : v
       )
     );
+
+    if (failedFiles.length > 0) {
+      setError(`Foto-Upload fehlgeschlagen — ${failedFiles.join("; ")}`);
+    }
   }
 
   function removePhoto(variantIndex, photoIndex) {

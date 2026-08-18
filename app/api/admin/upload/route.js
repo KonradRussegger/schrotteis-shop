@@ -23,7 +23,7 @@ export async function POST(request) {
     .upload(path, buffer, { contentType: file.type });
 
   if (error) {
-    return NextResponse.json({ error: "Upload fehlgeschlagen." }, { status: 500 });
+    return NextResponse.json({ error: `Supabase Storage: ${error.message}` }, { status: 500 });
   }
 
   const { data } = supabase.storage.from("product-images").getPublicUrl(path);
