@@ -1,7 +1,9 @@
 import Link from "next/link";
 import { supabaseAdmin } from "@/lib/supabase";
 
-export const dynamic = "force-dynamic"; // immer aktuelle Daten im Admin-Bereich
+export const dynamic = "force-dynamic";
+export const fetchCache = "force-no-store"; // verhindert jede Zwischenspeicherung, auch auf Infrastrukturebene
+export const revalidate = 0;
 
 // Produkte und Farbvarianten bewusst getrennt abgefragt und in JS
 // zusammengeführt, statt PostgREST-Embedding (product_variants(*)) zu

@@ -2,6 +2,8 @@ import { supabaseAdmin } from "@/lib/supabase";
 import AddCategoryForm from "@/components/AddCategoryForm";
 
 export const dynamic = "force-dynamic";
+export const fetchCache = "force-no-store";
+export const revalidate = 0;
 
 async function getCategories() {
   const supabase = supabaseAdmin();

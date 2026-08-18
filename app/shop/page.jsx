@@ -1,7 +1,9 @@
 import Link from "next/link";
 import { supabasePublic } from "@/lib/supabase";
 
-export const dynamic = "force-dynamic"; // immer aktuelle Daten, kein Cache
+export const dynamic = "force-dynamic";
+export const fetchCache = "force-no-store";
+export const revalidate = 0;
 
 // Produkte und Farbvarianten getrennt abgefragt und zusammengeführt (siehe
 // Kommentar in app/admin/page.jsx) statt PostgREST-Embedding.

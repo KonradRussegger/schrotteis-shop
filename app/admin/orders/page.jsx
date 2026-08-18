@@ -1,6 +1,8 @@
 import { supabaseAdmin } from "@/lib/supabase";
 
 export const dynamic = "force-dynamic";
+export const fetchCache = "force-no-store";
+export const revalidate = 0;
 
 async function getOpenOrders() {
   const supabase = supabaseAdmin();
