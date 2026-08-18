@@ -32,6 +32,16 @@ async function getData() {
 export default async function AdminPage() {
   const { categories, products } = await getData();
 
+  // TEMPORÄRE DIAGNOSE — danach wieder entfernen
+  const diagnoseVariants = products.flatMap((p) =>
+    (p.product_variants || []).map((v) => ({
+      product: p.name,
+      color: v.color_name,
+      imagesCount: v.images?.length ?? "undefined",
+      images: v.images,
+    }))
+  );
+
   return (
     <main className="px-6 md:px-12 py-16">
       <div className="flex items-center justify-between mb-10">
@@ -41,6 +51,11 @@ export default async function AdminPage() {
           <Link href="/admin/orders" className="hover:text-tanLight">Bestellübersicht →</Link>
           <Link href="/admin/kategorien" className="hover:text-tanLight">Kategorien verwalten →</Link>
         </div>
+      </div>
+
+      {/* TEMPORÄRE DIAGNOSE — danach wieder entfernen */}
+      <div className="border border-amber-700 bg-amber-950/30 rounded-sm px-4 py-3 mb-8 font-mono text-xs text-amber-300 whitespace-pre-wrap break-all">
+        DIAGNOSE FOTOS: {JSON.stringify(diagnoseVariants, null, 2)}
       </div>
 
       <table className="w-full text-sm">
