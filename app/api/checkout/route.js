@@ -3,7 +3,7 @@ import { supabaseAdmin } from "@/lib/supabase";
 import { mollie } from "@/lib/mollie";
 
 export async function POST(request) {
-  const { variantId, quantity, customer, shippingAddress } = await request.json();
+  const { variantId, quantity, deliveryType, customer, shippingAddress } = await request.json();
   const supabase = supabaseAdmin();
 
   // 1. Variante und zugehöriges Produkt getrennt laden und zusammenführen
@@ -34,7 +34,19 @@ export async function POST(request) {
     return NextResponse.json({ error: "Nicht genug Lagerbestand." }, { status: 400 });
   }
 
-  const totalCents = product.price_cents * quantity;
+  // Versandkosten kommen aus der Datenbank, nie vom Client — sonst könnte
+  // der Betrag im Browser manipuliert werden. Bei Abholung fallen keine an.
+  let shippingCostCents = 0;
+  if (deliveryType === "shipping") {
+    const { data: settings } = await supabase
+      .from("shop_settings")
+      .select("shipping_cost_cents")
+      .eq("id", 1)
+      .single();
+    shippingCostCents = settings?.shipping_cost_cents ?? 0;
+  }
+
+  const totalCents = product.price_cents * quantity + shippingCostCents;
 
   // 2. Bestellung mit Status "open" anlegen
   const { data: order, error: orderError } = await supabase
@@ -43,7 +55,11 @@ export async function POST(request) {
       status: "open",
       customer_name: customer.name,
       customer_email: customer.email,
-      shipping_address: shippingAddress,
+      delivery_type: deliveryType === "pickup" ? "pickup" : "shipping",
+      shipping_cost_cents: shippingCostCents,
+      // shipping_address ist NOT NULL in der DB — bei Abholung einen
+      // Platzhalter statt einer echten Adresse speichern.
+      shipping_address: deliveryType === "pickup" ? { pickup: true } : shippingAddress,
       items: [
         {
           variant_id: variant.id,

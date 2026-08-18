@@ -104,6 +104,21 @@ export default function ProductForm({ categories, initialProduct }) {
     );
   }
 
+  // Verschiebt ein Foto in der Reihenfolge nach links (-1) oder rechts (+1).
+  // Das erste Foto ist automatisch das Titelbild im Shop.
+  function movePhoto(variantIndex, photoIndex, direction) {
+    setVariants((prev) =>
+      prev.map((v, i) => {
+        if (i !== variantIndex) return v;
+        const newIndex = photoIndex + direction;
+        if (newIndex < 0 || newIndex >= v.images.length) return v;
+        const images = [...v.images];
+        [images[photoIndex], images[newIndex]] = [images[newIndex], images[photoIndex]];
+        return { ...v, images };
+      })
+    );
+  }
+
   async function handleSubmit(e) {
     e.preventDefault();
     setSubmitting(true);
@@ -267,12 +282,18 @@ export default function ProductForm({ categories, initialProduct }) {
                 <label className={labelClass}>Fotos ({variant.images.length})</label>
                 <p className="text-muted text-xs mb-2">
                   Werden automatisch auf max. 1600px verkleinert und komprimiert — Originalgröße spielt keine Rolle.
+                  Das erste Foto ist das Titelbild im Shop; mit den Pfeilen verschieben.
                 </p>
                 <div className="flex flex-wrap gap-2 mb-2">
                   {variant.images.map((img, pi) => (
                     <div key={pi} className="relative w-16 h-16">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img src={img} alt="" className="w-full h-full object-cover rounded-sm" />
+                      {pi === 0 && (
+                        <span className="absolute -top-1.5 -left-1.5 px-1 rounded-sm bg-tan text-bg text-[8px] font-mono font-medium">
+                          Titel
+                        </span>
+                      )}
                       <button
                         type="button"
                         onClick={() => removePhoto(i, pi)}
@@ -280,6 +301,26 @@ export default function ProductForm({ categories, initialProduct }) {
                       >
                         ×
                       </button>
+                      <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 flex gap-0.5">
+                        <button
+                          type="button"
+                          onClick={() => movePhoto(i, pi, -1)}
+                          disabled={pi === 0}
+                          className="w-5 h-5 rounded-sm bg-bg border border-line text-cream text-[10px] disabled:opacity-30"
+                          aria-label="Nach links verschieben"
+                        >
+                          ←
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => movePhoto(i, pi, 1)}
+                          disabled={pi === variant.images.length - 1}
+                          className="w-5 h-5 rounded-sm bg-bg border border-line text-cream text-[10px] disabled:opacity-30"
+                          aria-label="Nach rechts verschieben"
+                        >
+                          →
+                        </button>
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -288,7 +329,7 @@ export default function ProductForm({ categories, initialProduct }) {
                   accept="image/*"
                   multiple
                   onChange={(e) => handlePhotoUpload(i, Array.from(e.target.files))}
-                  className="font-mono text-xs text-muted"
+                  className="font-mono text-xs text-muted mt-3"
                 />
                 {variant.uploading && <p className="font-mono text-xs text-muted mt-1">Lädt hoch…</p>}
               </div>

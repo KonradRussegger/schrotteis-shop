@@ -9,7 +9,7 @@ async function getOpenOrders() {
   const { data } = await supabase
     .from("orders")
     .select("*")
-    .eq("status", "paid") // bezahlt, aber noch nicht versendet
+    .eq("status", "paid") // bezahlt, aber noch nicht versendet/abgeholt
     .order("created_at", { ascending: true });
   return data || [];
 }
@@ -18,33 +18,65 @@ export default async function OrdersPage() {
   const orders = await getOpenOrders();
 
   return (
-    <main>
-      <h1>Zu versendende Bestellungen</h1>
-      <p>{orders.length} offene Bestellung(en)</p>
+    <main className="px-6 md:px-12 py-16">
+      <h1 className="font-display text-3xl font-medium mb-2">Offene Bestellungen</h1>
+      <p className="text-muted text-sm mb-10">{orders.length} Bestellung(en) zu verpacken/abzuholen bereitzustellen</p>
 
-      {orders.map((order) => (
-        <section key={order.id} style={{ border: "1px solid #ccc", padding: "12px", marginBottom: "12px" }}>
-          <h3>Bestellung {order.id.slice(0, 8)}</h3>
-          <p>
-            <strong>Empfänger:</strong> {order.customer_name}
-            <br />
-            {order.shipping_address.street}
-            <br />
-            {order.shipping_address.zip} {order.shipping_address.city}
-            <br />
-            {order.shipping_address.country}
-          </p>
-          <p><strong>Zu verpacken:</strong></p>
-          <ul>
-            {order.items.map((item, i) => (
-              <li key={i}>{item.qty}x {item.product_name} — {item.color_name}</li>
-            ))}
-          </ul>
-          {/* TODO: Button "Als versendet markieren" -> Server Action,
-              die order.status auf "shipped" setzt */}
-          <button>Als versendet markieren</button>
-        </section>
-      ))}
+      {orders.length === 0 && (
+        <p className="text-muted font-mono text-sm">Aktuell keine offenen Bestellungen.</p>
+      )}
+
+      <div className="space-y-6">
+        {orders.map((order) => {
+          const isPickup = order.delivery_type === "pickup";
+          return (
+            <section key={order.id} className="border border-line rounded-sm p-5">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="font-display text-lg font-medium">Bestellung {order.id.slice(0, 8)}</h3>
+                <span
+                  className={`font-mono text-[10px] px-2 py-1 rounded-sm ${
+                    isPickup ? "bg-brass/20 text-brass" : "bg-tan/20 text-tanLight"
+                  }`}
+                >
+                  {isPickup ? "ABHOLUNG" : "VERSAND"}
+                </span>
+              </div>
+
+              <p className="text-sm mb-4">
+                <span className="text-muted">Kunde:</span> {order.customer_name} ({order.customer_email})
+                {isPickup ? (
+                  <>
+                    <br />
+                    <span className="text-muted">Wird in Abtenau abgeholt — keine Adresse nötig.</span>
+                  </>
+                ) : (
+                  <>
+                    <br />
+                    {order.shipping_address?.street}
+                    <br />
+                    {order.shipping_address?.zip} {order.shipping_address?.city}
+                    <br />
+                    {order.shipping_address?.country}
+                  </>
+                )}
+              </p>
+
+              <p className="font-mono text-xs text-muted mb-1.5">ZU VERPACKEN:</p>
+              <ul className="text-sm mb-4 space-y-1">
+                {order.items.map((item, i) => (
+                  <li key={i}>{item.qty}x {item.product_name} — {item.color_name}</li>
+                ))}
+              </ul>
+
+              {/* TODO: Button "Als versendet/abgeholt markieren" -> Server Action,
+                  die order.status auf "shipped" setzt */}
+              <button className="font-mono text-xs text-muted hover:text-tanLight border border-line rounded-sm px-4 py-2">
+                Als {isPickup ? "abgeholt" : "versendet"} markieren
+              </button>
+            </section>
+          );
+        })}
+      </div>
     </main>
   );
 }
