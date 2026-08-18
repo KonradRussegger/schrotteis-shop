@@ -1,4 +1,5 @@
 import { supabaseAdmin } from "@/lib/supabase";
+import CopyAddressButton from "@/components/CopyAddressButton";
 
 export const dynamic = "force-dynamic";
 export const fetchCache = "force-no-store";
@@ -14,8 +15,16 @@ async function getOpenOrders() {
   return data || [];
 }
 
+async function getCountryNames() {
+  const supabase = supabaseAdmin();
+  const { data } = await supabase.from("shipping_options").select("country_code, country_name");
+  const map = {};
+  (data || []).forEach((o) => (map[o.country_code] = o.country_name));
+  return map;
+}
+
 export default async function OrdersPage() {
-  const orders = await getOpenOrders();
+  const [orders, countryNames] = await Promise.all([getOpenOrders(), getCountryNames()]);
 
   return (
     <main className="px-6 md:px-12 py-16">
@@ -29,6 +38,7 @@ export default async function OrdersPage() {
       <div className="space-y-6">
         {orders.map((order) => {
           const isPickup = order.delivery_type === "pickup";
+          const countryName = countryNames[order.shipping_address?.country] || order.shipping_address?.country;
           return (
             <section key={order.id} className="border border-line rounded-sm p-5">
               <div className="flex items-center justify-between mb-4">
@@ -56,10 +66,22 @@ export default async function OrdersPage() {
                     <br />
                     {order.shipping_address?.zip} {order.shipping_address?.city}
                     <br />
-                    {order.shipping_address?.country}
+                    {countryName}
                   </>
                 )}
               </p>
+
+              {!isPickup && (
+                <div className="mb-4">
+                  <CopyAddressButton
+                    name={order.customer_name}
+                    street={order.shipping_address?.street}
+                    zip={order.shipping_address?.zip}
+                    city={order.shipping_address?.city}
+                    country={countryName}
+                  />
+                </div>
+              )}
 
               <p className="font-mono text-xs text-muted mb-1.5">ZU VERPACKEN:</p>
               <ul className="text-sm mb-4 space-y-1">

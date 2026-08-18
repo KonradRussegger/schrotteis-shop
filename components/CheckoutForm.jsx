@@ -5,18 +5,14 @@ import { useState } from "react";
 // Vereinfachtes Checkout-Formular für ein einzelnes Produkt (MVP).
 // Für einen echten Warenkorb mit mehreren Positionen müsste der State
 // erweitert werden (z.B. über Kontext oder Query-Params mit mehreren IDs).
-export default function CheckoutForm({ variantId, shippingCostCents }) {
+export default function CheckoutForm({ variantId, shippingOptions }) {
   const [deliveryType, setDeliveryType] = useState("shipping"); // "shipping" | "pickup"
-  const [form, setForm] = useState({
-    name: "",
-    email: "",
-    street: "",
-    zip: "",
-    city: "",
-    country: "AT",
-  });
+  const [countryCode, setCountryCode] = useState(shippingOptions[0]?.country_code || "");
+  const [form, setForm] = useState({ name: "", email: "", street: "", zip: "", city: "" });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+
+  const selectedShipping = shippingOptions.find((o) => o.country_code === countryCode);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -41,7 +37,7 @@ export default function CheckoutForm({ variantId, shippingCostCents }) {
                   street: form.street,
                   zip: form.zip,
                   city: form.city,
-                  country: form.country,
+                  country: countryCode,
                 }
               : null,
         }),
@@ -82,7 +78,11 @@ export default function CheckoutForm({ variantId, shippingCostCents }) {
               Versand
               <br />
               <span className="text-[11px]">
-                {shippingCostCents > 0 ? `+ ${(shippingCostCents / 100).toFixed(2)} €` : "kostenlos"}
+                {selectedShipping
+                  ? selectedShipping.shipping_cost_cents > 0
+                    ? `+ ${(selectedShipping.shipping_cost_cents / 100).toFixed(2)} €`
+                    : "kostenlos"
+                  : "Land wählen"}
               </span>
             </button>
             <button
@@ -98,6 +98,25 @@ export default function CheckoutForm({ variantId, shippingCostCents }) {
             </button>
           </div>
         </div>
+
+        {/* Land nur bei Versand relevant */}
+        {deliveryType === "shipping" && (
+          <div>
+            <label className={labelClass}>Land</label>
+            <select
+              className={inputClass}
+              value={countryCode}
+              onChange={(e) => setCountryCode(e.target.value)}
+              required
+            >
+              {shippingOptions.map((o) => (
+                <option key={o.country_code} value={o.country_code}>
+                  {o.country_name} — {(o.shipping_cost_cents / 100).toFixed(2)} €
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
 
         <div>
           <label className={labelClass}>Name</label>

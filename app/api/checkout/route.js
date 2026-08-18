@@ -34,16 +34,22 @@ export async function POST(request) {
     return NextResponse.json({ error: "Nicht genug Lagerbestand." }, { status: 400 });
   }
 
-  // Versandkosten kommen aus der Datenbank, nie vom Client — sonst könnte
-  // der Betrag im Browser manipuliert werden. Bei Abholung fallen keine an.
+  // Versandkosten kommen aus der Datenbank (je nach gewähltem Land), nie vom
+  // Client — sonst könnte der Betrag im Browser manipuliert werden. Bei
+  // Abholung fallen keine an.
   let shippingCostCents = 0;
   if (deliveryType === "shipping") {
-    const { data: settings } = await supabase
-      .from("shop_settings")
+    const countryCode = shippingAddress?.country;
+    const { data: shippingOption } = await supabase
+      .from("shipping_options")
       .select("shipping_cost_cents")
-      .eq("id", 1)
+      .eq("country_code", countryCode)
       .single();
-    shippingCostCents = settings?.shipping_cost_cents ?? 0;
+
+    if (!shippingOption) {
+      return NextResponse.json({ error: "Versand in dieses Land ist nicht verfügbar." }, { status: 400 });
+    }
+    shippingCostCents = shippingOption.shipping_cost_cents;
   }
 
   const totalCents = product.price_cents * quantity + shippingCostCents;

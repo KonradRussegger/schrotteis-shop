@@ -1,23 +1,30 @@
+import Link from "next/link";
 import { supabaseAdmin } from "@/lib/supabase";
-import SettingsForm from "@/components/SettingsForm";
+import ShippingOptionsManager from "@/components/ShippingOptionsManager";
 
 export const dynamic = "force-dynamic";
 export const fetchCache = "force-no-store";
 export const revalidate = 0;
 
-async function getSettings() {
+async function getShippingOptions() {
   const supabase = supabaseAdmin();
-  const { data } = await supabase.from("shop_settings").select("*").eq("id", 1).single();
-  return data;
+  const { data } = await supabase
+    .from("shipping_options")
+    .select("*")
+    .order("sort_order", { ascending: true });
+  return data || [];
 }
 
 export default async function EinstellungenPage() {
-  const settings = await getSettings();
+  const options = await getShippingOptions();
 
   return (
-    <main className="px-6 md:px-12 py-16 max-w-[480px]">
-      <h1 className="font-display text-3xl font-medium mb-10">Einstellungen</h1>
-      <SettingsForm initialShippingCents={settings?.shipping_cost_cents ?? 500} />
+    <main className="px-6 md:px-12 py-16 max-w-[640px]">
+      <Link href="/admin" className="font-mono text-xs text-muted hover:text-tanLight">
+        ← Zurück zur Übersicht
+      </Link>
+      <h1 className="font-display text-3xl font-medium mt-4 mb-10">Versandkosten nach Land</h1>
+      <ShippingOptionsManager initialOptions={options} />
     </main>
   );
 }
