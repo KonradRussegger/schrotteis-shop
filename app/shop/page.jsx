@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { supabasePublic } from "@/lib/supabase";
 
-export const revalidate = 60; // Katalog alle 60s neu aus Supabase laden
+export const dynamic = "force-dynamic"; // immer aktuelle Daten, kein Cache
 
 // Produkte und Farbvarianten getrennt abgefragt und zusammengeführt (siehe
 // Kommentar in app/admin/page.jsx) statt PostgREST-Embedding.

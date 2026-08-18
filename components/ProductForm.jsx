@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { resizeImage } from "@/lib/imageResize";
 
 const emptyVariant = () => ({
@@ -315,12 +316,19 @@ export default function ProductForm({ categories, initialProduct }) {
           {submitting ? "Wird gespeichert…" : isEditing ? "Änderungen speichern" : "Produkt anlegen"}
         </button>
 
+        <Link
+          href="/admin"
+          className="font-mono text-xs text-muted hover:text-tanLight"
+        >
+          Abbrechen (ohne zu speichern)
+        </Link>
+
         {isEditing && (
           <button
             type="button"
             onClick={handleDelete}
             disabled={deleting}
-            className="font-mono text-xs text-muted hover:text-red-400"
+            className="font-mono text-xs text-muted hover:text-red-400 ml-auto"
           >
             {deleting ? "Wird gelöscht…" : "Produkt löschen"}
           </button>
