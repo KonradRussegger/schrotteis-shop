@@ -1,0 +1,50 @@
+import Link from "next/link";
+import { theme as c } from "@/lib/theme";
+
+const FALLBACK_SWATCH_COLORS = [c.tan, "#3B2A20", "#C9A876", "#7A6A55"];
+
+export default function ProductCard({ product }) {
+  const variants = product.product_variants || [];
+  const totalStock = variants.reduce((sum, v) => sum + v.stock_quantity, 0);
+  const firstImage = variants.find((v) => v.images?.length)?.images?.[0];
+
+  return (
+    <Link href={`/shop/${product.slug}`} className="group block">
+      <div className="relative aspect-[4/5]" style={{ background: c.card }}>
+        {firstImage ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={firstImage} alt={product.name} className="w-full h-full object-cover" />
+        ) : (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <span className="font-mono text-[10px]" style={{ color: c.muted }}>FOTO FOLGT</span>
+          </div>
+        )}
+      </div>
+
+      {variants.length > 0 && (
+        <div className="flex gap-1.5 mt-3">
+          {variants.slice(0, 5).map((v, i) => (
+            <span
+              key={v.id}
+              className="w-3.5 h-3.5 rounded-full border"
+              style={{ background: v.color_hex || FALLBACK_SWATCH_COLORS[i % 4], borderColor: c.line }}
+              title={v.color_name}
+            />
+          ))}
+        </div>
+      )}
+
+      <p className="font-mono mt-2.5" style={{ fontSize: "13px", letterSpacing: "0.02em", color: c.ink }}>
+        {product.name.toUpperCase()}
+      </p>
+      <div className="flex items-center justify-between mt-1.5">
+        <span className="font-mono" style={{ fontSize: "15px", color: c.ink }}>
+          {(product.price_cents / 100).toFixed(2)} €
+        </span>
+        {totalStock === 0 && (
+          <span className="font-mono" style={{ fontSize: "11px", color: c.muted }}>Ausverkauft</span>
+        )}
+      </div>
+    </Link>
+  );
+}

@@ -1,22 +1,52 @@
 import Link from "next/link";
+import { theme as c } from "@/lib/theme";
 
 export default function Header() {
   return (
-    <header className="flex items-center justify-between px-6 md:px-12 py-6 sticky top-0 z-30 bg-bg border-b border-line">
-      <Link href="/" className="font-display text-xl tracking-wide">
-        Schrotteis Gwandlstubn
-      </Link>
-      <nav className="hidden md:flex gap-8 items-center font-mono text-[13px] text-muted">
-        <Link href="/shop" className="hover:text-tanLight">Kollektion</Link>
-        <Link href="/#handwerk" className="hover:text-tanLight">Handwerk</Link>
-        <Link href="/#kontakt" className="hover:text-tanLight">Kontakt</Link>
-      </nav>
-      <Link
-        href="/shop"
-        className="px-4 py-2 rounded-sm bg-tan text-bg font-mono text-xs font-medium"
+    <header
+      className="grid grid-cols-3 items-center px-6 md:px-14 py-4 sticky top-0 z-30"
+      style={{ background: c.bg, borderBottom: `1px solid ${c.line}` }}
+    >
+      <nav
+        className="hidden md:flex gap-8 items-center font-mono"
+        style={{ fontSize: "15px", letterSpacing: "0.03em", color: c.ink }}
       >
-        Zum Shop
-      </Link>
+        <a href="/#handwerk" className="hover:opacity-70">HANDWERK</a>
+        <Link href="/shop" className="hover:opacity-70">SHOP</Link>
+      </nav>
+
+      <div className="flex justify-center">
+        <Link href="/">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/logo.png" alt="Schrotteis Gwandlstubn" style={{ height: "58px", width: "auto", display: "block" }} />
+        </Link>
+      </div>
+
+      <div
+        className="flex items-center justify-end gap-6 font-mono"
+        style={{ fontSize: "15px", letterSpacing: "0.03em", color: c.ink }}
+      >
+        <a
+          href="https://instagram.com/schrotteis_gwandlstubn"
+          className="flex items-center gap-2 hover:opacity-70"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={c.ink} strokeWidth="1.6">
+            <rect x="3" y="3" width="18" height="18" rx="5" />
+            <circle cx="12" cy="12" r="4" />
+            <circle cx="17.3" cy="6.7" r="1.1" fill={c.ink} stroke="none" />
+          </svg>
+          <span className="hidden md:inline">@schrotteis_gwandlstubn</span>
+        </a>
+        <a href="mailto:info@schrotteis-gwandlstubn.at" className="flex items-center gap-2 hover:opacity-70">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={c.ink} strokeWidth="1.6">
+            <rect x="3" y="5" width="18" height="14" rx="2.5" />
+            <path d="M4 6.5l8 6.5 8-6.5" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+          <span className="hidden md:inline">E-MAIL</span>
+        </a>
+      </div>
     </header>
   );
 }

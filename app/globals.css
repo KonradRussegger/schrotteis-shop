@@ -8,3 +8,10 @@ body {
   background: #1c1410;
   color: #efe6d8;
 }
+
+/* Gedämpfte Textfarbe für die hellen Kundenseiten (Rechtstexte etc.) —
+   bewusst unabhängig von den dunklen Tailwind-Farbtokens, die der
+   Admin-Bereich weiterhin nutzt. */
+.site-muted {
+  color: #9C9184;
+}

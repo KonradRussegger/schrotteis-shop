@@ -1,6 +1,4 @@
 import "./globals.css";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
 
 export const metadata = {
   title: "Schrotteis Gwandlstubn",
@@ -8,14 +6,12 @@ export const metadata = {
     "Handgefertigte Lederwaren und Kostümteile aus Abtenau, Salzburg — Handwerk statt Massenware.",
 };
 
+// Bewusst schlank: Header/Footer der Kundenseiten sitzen im Layout der
+// (site)-Routengruppe, damit der Admin-Bereich sie NICHT bekommt.
 export default function RootLayout({ children }) {
   return (
     <html lang="de">
-      <body className="bg-bg text-cream font-body">
-        <Header />
-        {children}
-        <Footer />
-      </body>
+      <body className="font-body">{children}</body>
     </html>
   );
 }
