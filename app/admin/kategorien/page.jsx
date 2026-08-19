@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { supabaseAdmin } from "@/lib/supabase";
 import AddCategoryForm from "@/components/AddCategoryForm";
 
@@ -16,7 +17,10 @@ export default async function KategorienPage() {
 
   return (
     <main className="px-6 md:px-12 py-16 max-w-[560px]">
-      <h1 className="font-display text-3xl font-medium mb-8">Kategorien</h1>
+      <Link href="/admin" className="font-mono text-xs text-muted hover:text-tanLight">
+        ← Zurück zur Übersicht
+      </Link>
+      <h1 className="font-display text-3xl font-medium mt-4 mb-8">Kategorien</h1>
 
       <ul className="mb-10 space-y-2">
         {categories.map((c) => (

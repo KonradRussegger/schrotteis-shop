@@ -3,7 +3,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
 export const metadata = {
-  title: "Schrotteis Gwandlstuben",
+  title: "Schrotteis Gwandlstubn",
   description:
     "Handgefertigte Lederwaren und Kostümteile aus Abtenau, Salzburg — Handwerk statt Massenware.",
 };

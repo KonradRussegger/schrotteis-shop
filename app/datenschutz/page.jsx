@@ -12,9 +12,9 @@ export default function DatenschutzPage() {
         <section>
           <h2 className="font-display text-lg mb-2">Verantwortlicher</h2>
           <p className="text-muted">
-            Matthäus Auer, Schrotteis Gwandlstuben, Schratten 4, 5441 Abtenau
+            Matthäus Auer, Schrotteis Gwandlstubn, Schratten 4, 5441 Abtenau
             <br />
-            [Platzhalter — Kontakt-E-Mail ergänzen]
+            info@schrotteis-gwandlstubn.at
           </p>
         </section>
 

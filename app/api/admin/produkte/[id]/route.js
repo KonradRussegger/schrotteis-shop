@@ -4,7 +4,7 @@ import { slugify } from "@/lib/slugify";
 
 export async function PUT(request, { params }) {
   const { id } = params;
-  const { name, categoryId, description, material, dimensions, priceCents, variants } =
+  const { name, categoryId, description, material, dimensions, priceCents, isNew, variants } =
     await request.json();
 
   const supabase = supabaseAdmin();
@@ -20,6 +20,7 @@ export async function PUT(request, { params }) {
       material,
       dimensions,
       price_cents: priceCents,
+      is_new: Boolean(isNew),
       updated_at: new Date().toISOString(),
     })
     .eq("id", id);

@@ -13,7 +13,7 @@ export default function ImpressumPage() {
         <p>
           Matthäus Auer
           <br />
-          Schrotteis Gwandlstuben
+          Schrotteis Gwandlstubn
           <br />
           Schratten 4
           <br />
@@ -22,8 +22,12 @@ export default function ImpressumPage() {
           Österreich
         </p>
 
+        <p>
+          E-Mail: info@schrotteis-gwandlstubn.at
+        </p>
+
         <p className="text-muted">
-          [Platzhalter — noch zu ergänzen: Telefonnummer, E-Mail-Adresse,
+          [Platzhalter — noch zu ergänzen: Telefonnummer,
           Gewerbeberechtigung/-anschrift, GISA-Zahl, zuständige Gewerbebehörde,
           UID-Nummer, Mitgliedschaft bei der WKO Salzburg]
         </p>

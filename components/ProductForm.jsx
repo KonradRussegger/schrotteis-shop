@@ -28,6 +28,7 @@ export default function ProductForm({ categories, initialProduct }) {
   const [priceEuro, setPriceEuro] = useState(
     initialProduct ? (initialProduct.price_cents / 100).toFixed(2).replace(".", ",") : ""
   );
+  const [isNew, setIsNew] = useState(initialProduct?.is_new || false);
   const [variants, setVariants] = useState(
     initialProduct?.product_variants?.length
       ? initialProduct.product_variants.map((v) => ({
@@ -132,6 +133,7 @@ export default function ProductForm({ categories, initialProduct }) {
       material,
       dimensions,
       priceCents,
+      isNew,
       variants: variants.map((v) => ({
         id: v.id,
         colorName: v.colorName,
@@ -233,6 +235,18 @@ export default function ProductForm({ categories, initialProduct }) {
             required
           />
         </div>
+
+        <label className="flex items-center gap-2.5 cursor-pointer">
+          <input
+            type="checkbox"
+            checked={isNew}
+            onChange={(e) => setIsNew(e.target.checked)}
+            className="w-4 h-4"
+          />
+          <span className="font-mono text-xs text-muted">
+            Als "Neu" in der Kollektion auf der Startseite zeigen
+          </span>
+        </label>
       </section>
 
       {/* Farbvarianten */}

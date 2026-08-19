@@ -3,7 +3,7 @@ import { supabaseAdmin } from "@/lib/supabase";
 import { slugify } from "@/lib/slugify";
 
 export async function POST(request) {
-  const { name, categoryId, description, material, dimensions, priceCents, variants } =
+  const { name, categoryId, description, material, dimensions, priceCents, isNew, variants } =
     await request.json();
 
   if (!name || !priceCents || !variants || variants.length === 0) {
@@ -26,6 +26,7 @@ export async function POST(request) {
       material,
       dimensions,
       price_cents: priceCents,
+      is_new: Boolean(isNew),
     })
     .select()
     .single();

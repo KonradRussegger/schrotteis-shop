@@ -90,7 +90,7 @@ export async function POST(request) {
       currency: "EUR",
       value: (totalCents / 100).toFixed(2),
     },
-    description: `Bestellung ${order.id.slice(0, 8)} — Schrotteis Gwandlstuben`,
+    description: `Bestellung ${order.id.slice(0, 8)} — Schrotteis Gwandlstubn`,
     redirectUrl: `${process.env.NEXT_PUBLIC_SITE_URL}/bestellung/${order.id}`,
     webhookUrl: `${process.env.NEXT_PUBLIC_SITE_URL}/api/webhooks/mollie`,
     metadata: { orderId: order.id },

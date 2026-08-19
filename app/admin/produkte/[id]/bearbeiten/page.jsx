@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { supabaseAdmin } from "@/lib/supabase";
 import { notFound } from "next/navigation";
 import ProductForm from "@/components/ProductForm";
@@ -33,7 +34,10 @@ export default async function BearbeitenPage({ params }) {
 
   return (
     <main className="px-6 md:px-12 py-16 max-w-[640px]">
-      <h1 className="font-display text-3xl font-medium mb-10">Produkt bearbeiten</h1>
+      <Link href="/admin" className="font-mono text-xs text-muted hover:text-tanLight">
+        ← Zurück zur Übersicht
+      </Link>
+      <h1 className="font-display text-3xl font-medium mt-4 mb-10">Produkt bearbeiten</h1>
       <ProductForm categories={categories} initialProduct={product} />
     </main>
   );

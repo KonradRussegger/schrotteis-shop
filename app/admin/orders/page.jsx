@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { supabaseAdmin } from "@/lib/supabase";
 import CopyAddressButton from "@/components/CopyAddressButton";
 
@@ -28,7 +29,10 @@ export default async function OrdersPage() {
 
   return (
     <main className="px-6 md:px-12 py-16">
-      <h1 className="font-display text-3xl font-medium mb-2">Offene Bestellungen</h1>
+      <Link href="/admin" className="font-mono text-xs text-muted hover:text-tanLight">
+        ← Zurück zur Übersicht
+      </Link>
+      <h1 className="font-display text-3xl font-medium mt-4 mb-2">Offene Bestellungen</h1>
       <p className="text-muted text-sm mb-10">{orders.length} Bestellung(en) zu verpacken/abzuholen bereitzustellen</p>
 
       {orders.length === 0 && (

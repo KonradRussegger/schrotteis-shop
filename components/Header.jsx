@@ -4,7 +4,7 @@ export default function Header() {
   return (
     <header className="flex items-center justify-between px-6 md:px-12 py-6 sticky top-0 z-30 bg-bg border-b border-line">
       <Link href="/" className="font-display text-xl tracking-wide">
-        Schrotteis Gwandlstuben
+        Schrotteis Gwandlstubn
       </Link>
       <nav className="hidden md:flex gap-8 items-center font-mono text-[13px] text-muted">
         <Link href="/shop" className="hover:text-tanLight">Kollektion</Link>

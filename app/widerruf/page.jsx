@@ -20,9 +20,11 @@ export default function WiderrufPage() {
           <p className="text-muted mt-3">
             Um Ihr Widerrufsrecht auszuüben, müssen Sie uns
             <br />
-            Matthäus Auer, Schrotteis Gwandlstuben, Schratten 4, 5441 Abtenau
+            Matthäus Auer, Schrotteis Gwandlstubn, Schratten 4, 5441 Abtenau
             <br />
-            [Platzhalter — Telefonnummer, E-Mail-Adresse ergänzen]
+            E-Mail: info@schrotteis-gwandlstubn.at
+            <br />
+            [Platzhalter — Telefonnummer noch ergänzen]
             <br />
             mittels einer eindeutigen Erklärung (z. B. per Post oder E-Mail)
             über Ihren Entschluss, diesen Vertrag zu widerrufen, informieren.
@@ -32,11 +34,57 @@ export default function WiderrufPage() {
         <section>
           <h2 className="font-display text-lg mb-2">Folgen des Widerrufs</h2>
           <p className="text-muted">
-            [Platzhalter — Rückerstattungsmodalitäten, Rücksendekosten,
-            eventuelle Sonderregelungen bei Sonderanfertigungen (z. B.
-            individuell angefertigte Kostümteile) ergänzen — bei
-            maßgefertigten Einzelstücken kann das Widerrufsrecht unter
-            Umständen eingeschränkt sein, das muss rechtlich geprüft werden]
+            Wenn Sie diesen Vertrag widerrufen, haben wir Ihnen alle
+            Zahlungen, die wir von Ihnen erhalten haben, einschließlich der
+            Lieferkosten (mit Ausnahme der zusätzlichen Kosten, die sich
+            daraus ergeben, dass Sie eine andere Art der Lieferung als die
+            von uns angebotene, günstigste Standardlieferung gewählt haben),
+            unverzüglich und spätestens binnen vierzehn Tagen ab dem Tag
+            zurückzuzahlen, an dem die Mitteilung über Ihren Widerruf dieses
+            Vertrags bei uns eingegangen ist. Für diese Rückzahlung verwenden
+            wir dasselbe Zahlungsmittel, das Sie bei der ursprünglichen
+            Transaktion eingesetzt haben, es sei denn, mit Ihnen wurde
+            ausdrücklich etwas anderes vereinbart; in keinem Fall werden
+            Ihnen wegen dieser Rückzahlung Entgelte berechnet.
+          </p>
+          <p className="text-muted mt-3">
+            Wir können die Rückzahlung verweigern, bis wir die Waren wieder
+            zurückerhalten haben oder bis Sie den Nachweis erbracht haben,
+            dass Sie die Waren zurückgesandt haben, je nachdem, welches der
+            frühere Zeitpunkt ist.
+          </p>
+          <p className="text-muted mt-3">
+            Sie haben die Waren unverzüglich und in jedem Fall spätestens
+            binnen vierzehn Tagen ab dem Tag, an dem Sie uns über den
+            Widerruf dieses Vertrags unterrichten, an uns zurückzusenden
+            oder zu übergeben. Die Frist ist gewahrt, wenn Sie die Waren vor
+            Ablauf der Frist von vierzehn Tagen absenden.
+          </p>
+          <p className="mt-3">
+            <strong>Sie tragen die unmittelbaren Kosten der Rücksendung der Waren.</strong>
+          </p>
+          <p className="text-muted mt-3">
+            Sie müssen für einen etwaigen Wertverlust der Waren nur
+            aufkommen, wenn dieser Wertverlust auf einen zur Prüfung der
+            Beschaffenheit, Eigenschaften und Funktionsweise der Waren nicht
+            notwendigen Umgang mit ihnen zurückzuführen ist.
+          </p>
+        </section>
+
+        <section>
+          <h2 className="font-display text-lg mb-2">
+            Ausschluss des Widerrufsrechts bei Sonderanfertigungen
+          </h2>
+          <p className="text-muted">
+            Bei Waren, die nicht vorgefertigt sind und für deren Herstellung
+            eine individuelle Auswahl oder Bestimmung durch Sie maßgeblich
+            ist oder die eindeutig auf Ihre persönlichen Bedürfnisse
+            zugeschnitten sind (z. B. individuell angefertigte oder nach Maß
+            gefertigte Kostümteile), besteht <strong>kein</strong> Widerrufsrecht.
+            [Platzhalter — im Einzelfall prüfen (lassen), welche Artikel des
+            Sortiments unter diese Ausnahme fallen, und diese im
+            Bestellprozess sowie in der Artikelbeschreibung klar als "vom
+            Widerruf ausgeschlossen" kennzeichnen.]
           </p>
         </section>
       </div>

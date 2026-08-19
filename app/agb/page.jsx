@@ -13,7 +13,7 @@ export default function AGBPage() {
           <h2 className="font-display text-lg mb-2">1. Geltungsbereich</h2>
           <p className="text-muted">
             Diese AGB gelten für alle Bestellungen über den Onlineshop von
-            Schrotteis Gwandlstuben, Matthäus Auer, Schratten 4, 5441 Abtenau.
+            Schrotteis Gwandlstubn, Matthäus Auer, Schratten 4, 5441 Abtenau.
           </p>
         </section>
 

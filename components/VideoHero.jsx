@@ -27,7 +27,7 @@ export default function VideoHero() {
         <h1 className="font-display font-medium text-cream text-[clamp(38px,7vw,84px)] leading-[1.02]">
           Schrotteis
           <br />
-          <span className="text-tan">Gwandlstuben</span>
+          <span className="text-tan">Gwandlstubn</span>
         </h1>
       </div>
     </section>

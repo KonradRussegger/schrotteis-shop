@@ -1,4 +1,4 @@
-# Schrotteis Gwandlstuben — Shop
+# Schrotteis Gwandlstubn — Shop
 
 Projektgerüst: Next.js (App Router) + Tailwind + Supabase + Mollie + sevDesk.
 
