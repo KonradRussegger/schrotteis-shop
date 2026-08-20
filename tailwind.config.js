@@ -4,16 +4,16 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        bg: "#1C1410",
-        bgAlt: "#241A14",
-        card: "#2A1E17",
+        bg: "#FFFFFF",
+        bgAlt: "#F7F5F1",
+        card: "#F7F5F1",
         tan: "#B8845C",
-        tanLight: "#D9B08C",
-        saddle: "#5C3524",
+        tanLight: "#96693F",
+        saddle: "#B8845C",
         brass: "#A8875A",
-        cream: "#EFE6D8",
-        muted: "#B8A995",
-        line: "#3A2C22",
+        cream: "#211812",
+        muted: "#9C9184",
+        line: "#E8E3DA",
       },
       fontFamily: {
         display: ["Fraunces", "serif"],

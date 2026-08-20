@@ -2,16 +2,16 @@ import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
 
 export async function PUT(request) {
-  const { shippingCostCents } = await request.json();
+  const { lowStockThreshold } = await request.json();
 
-  if (typeof shippingCostCents !== "number" || shippingCostCents < 0) {
+  if (typeof lowStockThreshold !== "number" || lowStockThreshold < 0) {
     return NextResponse.json({ error: "Ungültiger Wert." }, { status: 400 });
   }
 
   const supabase = supabaseAdmin();
   const { error } = await supabase
     .from("shop_settings")
-    .update({ shipping_cost_cents: shippingCostCents, updated_at: new Date().toISOString() })
+    .update({ low_stock_threshold: lowStockThreshold, updated_at: new Date().toISOString() })
     .eq("id", 1);
 
   if (error) {

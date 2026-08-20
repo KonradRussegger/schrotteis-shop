@@ -5,13 +5,15 @@ import { theme as c } from "@/lib/theme";
 
 // Zeigt ein Produkt mit Farbauswahl. Jede Farbvariante hat ihre eigenen
 // Fotos (beliebig viele) und ihren eigenen Lagerbestand.
-export default function ProductDetail({ product }) {
+export default function ProductDetail({ product, lowStockThreshold = 3 }) {
   const variants = product.product_variants || [];
   const [selectedVariantId, setSelectedVariantId] = useState(variants[0]?.id);
   const [photoIndex, setPhotoIndex] = useState(0);
 
   const variant = variants.find((v) => v.id === selectedVariantId) || variants[0];
   const images = variant?.images?.length ? variant.images : [];
+  const hasDiscount = product.original_price_cents && product.original_price_cents > product.price_cents;
+  const isLowStock = variant && variant.stock_quantity > 0 && variant.stock_quantity <= lowStockThreshold;
 
   function selectVariant(id) {
     setSelectedVariantId(id);
@@ -52,9 +54,22 @@ export default function ProductDetail({ product }) {
         <p style={{ color: c.muted, lineHeight: 1.6, fontSize: "16px" }} className="mb-6">{product.description}</p>
         {product.material && <p className="font-mono" style={{ fontSize: "14px", color: c.muted }}>Material: {product.material}</p>}
         {product.dimensions && <p className="font-mono mb-6" style={{ fontSize: "14px", color: c.muted }}>Maße: {product.dimensions}</p>}
-        <p className="font-mono mb-7" style={{ fontSize: "24px", color: c.ink }}>
-          {(product.price_cents / 100).toFixed(2)} €
-        </p>
+        <div className="flex items-center gap-3 mb-2">
+          {hasDiscount && (
+            <span className="font-mono" style={{ fontSize: "17px", color: c.muted, textDecoration: "line-through" }}>
+              {(product.original_price_cents / 100).toFixed(2)} €
+            </span>
+          )}
+          <p className="font-mono" style={{ fontSize: "24px", color: hasDiscount ? c.tanDeep : c.ink }}>
+            {(product.price_cents / 100).toFixed(2)} €
+          </p>
+        </div>
+        {isLowStock && (
+          <p className="font-mono mb-5" style={{ fontSize: "13px", color: c.tanDeep }}>
+            Nur noch {variant.stock_quantity} Stück in {variant.color_name} verfügbar
+          </p>
+        )}
+        {!isLowStock && <div className="mb-5" />}
 
         {variants.length > 0 && (
           <div className="mb-8">

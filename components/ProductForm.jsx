@@ -29,6 +29,11 @@ export default function ProductForm({ categories, initialProduct }) {
     initialProduct ? (initialProduct.price_cents / 100).toFixed(2).replace(".", ",") : ""
   );
   const [isNew, setIsNew] = useState(initialProduct?.is_new || false);
+  const [originalPriceEuro, setOriginalPriceEuro] = useState(
+    initialProduct?.original_price_cents
+      ? (initialProduct.original_price_cents / 100).toFixed(2).replace(".", ",")
+      : ""
+  );
   const [variants, setVariants] = useState(
     initialProduct?.product_variants?.length
       ? initialProduct.product_variants.map((v) => ({
@@ -126,6 +131,9 @@ export default function ProductForm({ categories, initialProduct }) {
     setError(null);
 
     const priceCents = Math.round(parseFloat(priceEuro.replace(",", ".")) * 100);
+    const originalPriceCents = originalPriceEuro.trim()
+      ? Math.round(parseFloat(originalPriceEuro.replace(",", ".")) * 100)
+      : null;
     const payload = {
       name,
       categoryId,
@@ -133,6 +141,7 @@ export default function ProductForm({ categories, initialProduct }) {
       material,
       dimensions,
       priceCents,
+      originalPriceCents,
       isNew,
       variants: variants.map((v) => ({
         id: v.id,
@@ -233,6 +242,19 @@ export default function ProductForm({ categories, initialProduct }) {
             onChange={(e) => setPriceEuro(e.target.value)}
             placeholder="z. B. 380,00"
             required
+          />
+        </div>
+
+        <div>
+          <label className={labelClass}>Ursprünglicher Preis (€) — optional</label>
+          <p className="text-muted text-xs mb-1.5">
+            Nur ausfüllen, wenn der Preis reduziert wurde. Zeigt sich im Shop durchgestrichen neben dem aktuellen Preis.
+          </p>
+          <input
+            className={inputClass}
+            value={originalPriceEuro}
+            onChange={(e) => setOriginalPriceEuro(e.target.value)}
+            placeholder="z. B. 450,00"
           />
         </div>
 

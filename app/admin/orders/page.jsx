@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { supabaseAdmin } from "@/lib/supabase";
 import CopyAddressButton from "@/components/CopyAddressButton";
+import OrderActions from "@/components/OrderActions";
 
 export const dynamic = "force-dynamic";
 export const fetchCache = "force-no-store";
@@ -94,11 +95,7 @@ export default async function OrdersPage() {
                 ))}
               </ul>
 
-              {/* TODO: Button "Als versendet/abgeholt markieren" -> Server Action,
-                  die order.status auf "shipped" setzt */}
-              <button className="font-mono text-xs text-muted hover:text-tanLight border border-line rounded-sm px-4 py-2">
-                Als {isPickup ? "abgeholt" : "versendet"} markieren
-              </button>
+              <OrderActions order={order} isPickup={isPickup} />
             </section>
           );
         })}

@@ -3,10 +3,12 @@ import { theme as c } from "@/lib/theme";
 
 const FALLBACK_SWATCH_COLORS = [c.tan, "#3B2A20", "#C9A876", "#7A6A55"];
 
-export default function ProductCard({ product }) {
+export default function ProductCard({ product, lowStockThreshold = 3 }) {
   const variants = product.product_variants || [];
   const totalStock = variants.reduce((sum, v) => sum + v.stock_quantity, 0);
   const firstImage = variants.find((v) => v.images?.length)?.images?.[0];
+  const hasDiscount = product.original_price_cents && product.original_price_cents > product.price_cents;
+  const isLowStock = totalStock > 0 && totalStock <= lowStockThreshold;
 
   return (
     <Link href={`/shop/${product.slug}`} className="group block">
@@ -18,6 +20,14 @@ export default function ProductCard({ product }) {
           <div className="absolute inset-0 flex items-center justify-center">
             <span className="font-mono text-[10px]" style={{ color: c.muted }}>FOTO FOLGT</span>
           </div>
+        )}
+        {hasDiscount && (
+          <span
+            className="absolute top-3 left-3 font-mono px-2 py-1"
+            style={{ fontSize: "10px", background: c.tanDeep, color: "#fff" }}
+          >
+            REDUZIERT
+          </span>
         )}
       </div>
 
@@ -38,12 +48,23 @@ export default function ProductCard({ product }) {
         {product.name.toUpperCase()}
       </p>
       <div className="flex items-center justify-between mt-1.5">
-        <span className="font-mono" style={{ fontSize: "15px", color: c.ink }}>
-          {(product.price_cents / 100).toFixed(2)} €
+        <span className="font-mono flex items-center gap-2">
+          {hasDiscount && (
+            <span style={{ fontSize: "12px", color: c.muted, textDecoration: "line-through" }}>
+              {(product.original_price_cents / 100).toFixed(2)} €
+            </span>
+          )}
+          <span style={{ fontSize: "15px", color: hasDiscount ? c.tanDeep : c.ink }}>
+            {(product.price_cents / 100).toFixed(2)} €
+          </span>
         </span>
-        {totalStock === 0 && (
+        {totalStock === 0 ? (
           <span className="font-mono" style={{ fontSize: "11px", color: c.muted }}>Ausverkauft</span>
-        )}
+        ) : isLowStock ? (
+          <span className="font-mono" style={{ fontSize: "11px", color: c.tanDeep }}>
+            Nur noch {totalStock} Stück
+          </span>
+        ) : null}
       </div>
     </Link>
   );

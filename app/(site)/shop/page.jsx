@@ -27,8 +27,14 @@ async function getProducts() {
   }));
 }
 
+async function getLowStockThreshold() {
+  const supabase = supabasePublic();
+  const { data } = await supabase.from("shop_settings").select("low_stock_threshold").eq("id", 1).single();
+  return data?.low_stock_threshold ?? 3;
+}
+
 export default async function ShopPage() {
-  const products = await getProducts();
+  const [products, lowStockThreshold] = await Promise.all([getProducts(), getLowStockThreshold()]);
 
   return (
     <main className="px-6 md:px-14 py-14">
@@ -49,7 +55,7 @@ export default async function ShopPage() {
       ) : (
         <div className="grid grid-cols-2 gap-x-8 gap-y-12">
           {products.map((p) => (
-            <ProductCard key={p.id} product={p} />
+            <ProductCard key={p.id} product={p} lowStockThreshold={lowStockThreshold} />
           ))}
         </div>
       )}

@@ -70,7 +70,12 @@ async function getNewProducts() {
 }
 
 export default async function HomePage() {
-  const newProducts = await getNewProducts();
+  const supabase = supabasePublic();
+  const [newProducts, settingsResult] = await Promise.all([
+    getNewProducts(),
+    supabase.from("shop_settings").select("low_stock_threshold").eq("id", 1).single(),
+  ]);
+  const lowStockThreshold = settingsResult.data?.low_stock_threshold ?? 3;
 
   return (
     <main>
@@ -100,7 +105,7 @@ export default async function HomePage() {
           </div>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
             {newProducts.map((p) => (
-              <ProductCard key={p.id} product={p} />
+              <ProductCard key={p.id} product={p} lowStockThreshold={lowStockThreshold} />
             ))}
           </div>
         </section>

@@ -27,9 +27,18 @@ async function getProduct(slug) {
   return { ...product, product_variants: variants || [] };
 }
 
+async function getLowStockThreshold() {
+  const supabase = supabasePublic();
+  const { data } = await supabase.from("shop_settings").select("low_stock_threshold").eq("id", 1).single();
+  return data?.low_stock_threshold ?? 3;
+}
+
 export default async function ProductPage({ params }) {
-  const product = await getProduct(params.slug);
+  const [product, lowStockThreshold] = await Promise.all([
+    getProduct(params.slug),
+    getLowStockThreshold(),
+  ]);
   if (!product) notFound();
 
-  return <ProductDetail product={product} />;
+  return <ProductDetail product={product} lowStockThreshold={lowStockThreshold} />;
 }
