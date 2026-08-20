@@ -8,6 +8,7 @@ export default function CheckoutForm({ variantId, shippingOptions }) {
   const [deliveryType, setDeliveryType] = useState("shipping"); // "shipping" | "pickup"
   const [countryCode, setCountryCode] = useState(shippingOptions[0]?.country_code || "");
   const [form, setForm] = useState({ name: "", email: "", street: "", zip: "", city: "" });
+  const [code, setCode] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -31,10 +32,14 @@ export default function CheckoutForm({ variantId, shippingOptions }) {
             deliveryType === "shipping"
               ? { street: form.street, zip: form.zip, city: form.city, country: countryCode }
               : null,
+          code: code.trim() || undefined,
         }),
       });
 
-      if (!res.ok) throw new Error("Bestellung konnte nicht erstellt werden.");
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        throw new Error(body.error || "Bestellung konnte nicht erstellt werden.");
+      }
       const { checkoutUrl } = await res.json();
       window.location.href = checkoutUrl;
     } catch (err) {
@@ -128,6 +133,17 @@ export default function CheckoutForm({ variantId, shippingOptions }) {
             </div>
           </>
         )}
+
+        <div>
+          <label className="font-mono block mb-1.5" style={labelStyle}>GUTSCHEIN- ODER RABATTCODE — OPTIONAL</label>
+          <input
+            className={inputClass}
+            style={inputStyle}
+            value={code}
+            onChange={(e) => setCode(e.target.value)}
+            placeholder="z. B. SOMMER20"
+          />
+        </div>
 
         {error && <p className="text-sm" style={{ color: "#B03A2C" }}>{error}</p>}
 

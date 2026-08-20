@@ -64,6 +64,13 @@ export default async function OrdersPage() {
                 </span>
               </div>
 
+              {order.discount_amount_cents > 0 && (
+                <p className="font-mono text-xs text-tanLight mb-3">
+                  {order.redeemed_voucher_id ? "Gutschein eingelöst" : "Rabattcode"}: {order.discount_code} (−
+                  {(order.discount_amount_cents / 100).toFixed(2)} €)
+                </p>
+              )}
+
               <p className="text-sm mb-4">
                 <span className="text-muted">Kunde:</span> {order.customer_name} ({order.customer_email})
                 {isPickup ? (

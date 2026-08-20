@@ -42,6 +42,8 @@ export default async function AdminPage() {
           <Link href="/admin/produkte/neu" className="hover:text-tanLight">+ Neues Produkt</Link>
           <Link href="/admin/orders" className="hover:text-tanLight">Bestellübersicht →</Link>
           <Link href="/admin/kategorien" className="hover:text-tanLight">Kategorien verwalten →</Link>
+          <Link href="/admin/rabattcodes" className="hover:text-tanLight">Rabattcodes →</Link>
+          <Link href="/admin/gutscheine" className="hover:text-tanLight">Gutscheine →</Link>
           <Link href="/admin/einstellungen" className="hover:text-tanLight">Einstellungen →</Link>
         </div>
       </div>

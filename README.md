@@ -20,13 +20,15 @@ Projektgerüst: Next.js (App Router) + Tailwind + Supabase + Mollie + sevDesk.
 - **Abholung/Versand** im Checkout, Versandkosten nach Land im Admin konfigurierbar (`/admin/einstellungen`)
 - **Niedriger Lagerbestand**: einstellbare Schwelle, zeigt "Nur noch X Stück" im Shop
 - **Bestellabwicklung**: "Als versendet/abgeholt markieren" setzt den Status, E-Mail-Entwurf per Mailto-Link (Übergangslösung bis Resend mit eigener Domain eingerichtet ist)
+- **Rabattcodes** (`/admin/rabattcodes`): Prozent oder Fixbetrag, optionaler Gültigkeitszeitraum, aktivierbar/deaktivierbar
+- **Geschenkgutscheine** (`/gutschein` zum Kauf, `/admin/gutscheine` zur Verwaltung): vereinfachtes Modell — kein Restguthaben, ein Gutschein wird beim Einlösen komplett verbraucht ("alles oder nichts"), auch wenn die Bestellung kleiner ist als der Gutscheinwert. Gutschein-Kauf läuft über denselben Mollie-Checkout wie Produkte. Rabattcode und Gutschein teilen sich dasselbe Eingabefeld im Checkout.
 
 ## Was als Nächstes fehlt (bewusst noch offen)
 
 - Eigenes Hero-Video (`public/hero.mp4`) und echte Produktfotos
-- Automatischer E-Mail-Versand über Resend (braucht verifizierte Domain, siehe `components/OrderActions.jsx`)
+- Automatischer E-Mail-Versand über Resend (braucht verifizierte Domain, siehe `components/OrderActions.jsx` und `components/VoucherEmailButton.jsx`)
 - sevDesk-Anbindung: Code steht, aber pausiert (kein API-Token hinterlegt)
-- Gutschein-/Rabattcode-System (bewusst zurückgestellt)
+- Grafisch gestaltete Gutschein-Vorlage (PDF/Bild) statt reiner Code-Anzeige — aktuell manuell vorstellbar, sobald gewünscht
 - Mehrere Produkte in einem Warenkorb (aktuell: 1 Variante pro Bestellung, MVP)
 - Rechtstexte final durch Anwalt/WKO/Generator freigeben lassen
 

@@ -3,9 +3,10 @@ import { supabaseAdmin } from "@/lib/supabase";
 import { mollie } from "@/lib/mollie";
 import { findOrCreateContact, createInvoiceForOrder } from "@/lib/sevdesk";
 
-// Mollie ruft diese Route auf, sobald sich der Zahlungsstatus ändert.
-// Wichtig: dem Payload selbst nie vertrauen — den Status immer live über
-// die Mollie-API nachladen (siehe Mollie-Doku "Verifying webhook calls").
+// Mollie ruft diese Route auf, sobald sich der Zahlungsstatus ändert — sowohl
+// für normale Bestellungen als auch für Gutschein-Käufe. Wichtig: dem Payload
+// selbst nie vertrauen — den Status immer live über die Mollie-API nachladen
+// (siehe Mollie-Doku "Verifying webhook calls").
 export async function POST(request) {
   const form = await request.formData();
   const paymentId = form.get("id");
@@ -22,18 +23,30 @@ export async function POST(request) {
     .eq("mollie_payment_id", paymentId)
     .single();
 
-  if (!order) {
-    return NextResponse.json({ error: "Bestellung nicht gefunden." }, { status: 404 });
+  if (order) {
+    return handleOrderPayment(supabase, order, payment);
   }
 
+  const { data: voucher } = await supabase
+    .from("gift_vouchers")
+    .select("*")
+    .eq("mollie_payment_id", paymentId)
+    .single();
+
+  if (voucher) {
+    return handleVoucherPayment(supabase, voucher, payment);
+  }
+
+  return NextResponse.json({ error: "Weder Bestellung noch Gutschein gefunden." }, { status: 404 });
+}
+
+async function handleOrderPayment(supabase, order, payment) {
   // Idempotenz: Mollie kann denselben Webhook mehrfach senden.
-  // Wenn die Bestellung schon als "paid" markiert ist, nichts doppelt ausführen.
   if (order.status === "paid" || order.status === "shipped") {
     return NextResponse.json({ ok: true, note: "Bereits verarbeitet." });
   }
 
   if (payment.status !== "paid") {
-    // z.B. "open", "canceled", "expired" — nur bei "paid" weitermachen
     return NextResponse.json({ ok: true, note: `Status: ${payment.status}` });
   }
 
@@ -48,7 +61,16 @@ export async function POST(request) {
     });
   }
 
-  // 3. sevDesk: Kontakt finden/anlegen + Rechnung erstellen
+  // 3. Falls ein Gutschein eingelöst wurde: endgültig als eingelöst markieren
+  //    (im Checkout schon reserviert, hier nur zur Sicherheit bestätigt)
+  if (order.redeemed_voucher_id) {
+    await supabase
+      .from("gift_vouchers")
+      .update({ status: "redeemed", redeemed_order_id: order.id, redeemed_at: new Date().toISOString() })
+      .eq("id", order.redeemed_voucher_id);
+  }
+
+  // 4. sevDesk: Kontakt finden/anlegen + Rechnung erstellen
   try {
     const contact = await findOrCreateContact({
       name: order.customer_name,
@@ -64,6 +86,24 @@ export async function POST(request) {
     // Bestellprozess nicht blockieren, aber unbedingt geloggt/überwacht werden.
     console.error("sevDesk-Rechnung fehlgeschlagen:", err);
   }
+
+  return NextResponse.json({ ok: true });
+}
+
+async function handleVoucherPayment(supabase, voucher, payment) {
+  // Idempotenz
+  if (voucher.status === "active" || voucher.status === "redeemed") {
+    return NextResponse.json({ ok: true, note: "Bereits verarbeitet." });
+  }
+
+  if (payment.status !== "paid") {
+    return NextResponse.json({ ok: true, note: `Status: ${payment.status}` });
+  }
+
+  await supabase
+    .from("gift_vouchers")
+    .update({ status: "active", updated_at: new Date().toISOString() })
+    .eq("id", voucher.id);
 
   return NextResponse.json({ ok: true });
 }
