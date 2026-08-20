@@ -52,7 +52,7 @@ export async function POST(request) {
     shippingCostCents = shippingOption.shipping_cost_cents;
   }
 
-  const totalCents = product.price_cents * quantity + shippingCostCents;
+  const totalCents = variant.price_cents * quantity + shippingCostCents;
 
   // 2. Bestellung mit Status "open" anlegen
   const { data: order, error: orderError } = await supabase
@@ -72,7 +72,7 @@ export async function POST(request) {
           product_name: product.name,
           color_name: variant.color_name,
           qty: quantity,
-          price_cents: product.price_cents,
+          price_cents: variant.price_cents,
         },
       ],
       total_cents: totalCents,

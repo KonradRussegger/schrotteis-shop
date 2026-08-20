@@ -7,8 +7,15 @@ export default function ProductCard({ product, lowStockThreshold = 3 }) {
   const variants = product.product_variants || [];
   const totalStock = variants.reduce((sum, v) => sum + v.stock_quantity, 0);
   const firstImage = variants.find((v) => v.images?.length)?.images?.[0];
-  const hasDiscount = product.original_price_cents && product.original_price_cents > product.price_cents;
   const isLowStock = totalStock > 0 && totalStock <= lowStockThreshold;
+
+  // Preis lebt pro Farbvariante — auf der Karte zeigen wir die günstigste
+  // Farbe. Unterscheiden sich die Preise, kommt ein "ab" davor.
+  const prices = variants.map((v) => v.price_cents).filter(Boolean);
+  const minPrice = prices.length ? Math.min(...prices) : null;
+  const pricesDiffer = prices.length > 1 && Math.max(...prices) !== minPrice;
+  const cheapestVariant = variants.find((v) => v.price_cents === minPrice);
+  const hasDiscount = cheapestVariant?.original_price_cents && cheapestVariant.original_price_cents > cheapestVariant.price_cents;
 
   return (
     <Link href={`/shop/${product.slug}`} className="group block">
@@ -51,12 +58,15 @@ export default function ProductCard({ product, lowStockThreshold = 3 }) {
         <span className="font-mono flex items-center gap-2">
           {hasDiscount && (
             <span style={{ fontSize: "12px", color: c.muted, textDecoration: "line-through" }}>
-              {(product.original_price_cents / 100).toFixed(2)} €
+              {(cheapestVariant.original_price_cents / 100).toFixed(2)} €
             </span>
           )}
-          <span style={{ fontSize: "15px", color: hasDiscount ? c.tanDeep : c.ink }}>
-            {(product.price_cents / 100).toFixed(2)} €
-          </span>
+          {minPrice !== null && (
+            <span style={{ fontSize: "15px", color: hasDiscount ? c.tanDeep : c.ink }}>
+              {pricesDiffer && "ab "}
+              {(minPrice / 100).toFixed(2)} €
+            </span>
+          )}
         </span>
         {totalStock === 0 ? (
           <span className="font-mono" style={{ fontSize: "11px", color: c.muted }}>Ausverkauft</span>

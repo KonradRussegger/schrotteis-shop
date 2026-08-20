@@ -12,7 +12,7 @@ export default function ProductDetail({ product, lowStockThreshold = 3 }) {
 
   const variant = variants.find((v) => v.id === selectedVariantId) || variants[0];
   const images = variant?.images?.length ? variant.images : [];
-  const hasDiscount = product.original_price_cents && product.original_price_cents > product.price_cents;
+  const hasDiscount = variant?.original_price_cents && variant.original_price_cents > variant.price_cents;
   const isLowStock = variant && variant.stock_quantity > 0 && variant.stock_quantity <= lowStockThreshold;
 
   function selectVariant(id) {
@@ -57,11 +57,11 @@ export default function ProductDetail({ product, lowStockThreshold = 3 }) {
         <div className="flex items-center gap-3 mb-2">
           {hasDiscount && (
             <span className="font-mono" style={{ fontSize: "17px", color: c.muted, textDecoration: "line-through" }}>
-              {(product.original_price_cents / 100).toFixed(2)} €
+              {(variant.original_price_cents / 100).toFixed(2)} €
             </span>
           )}
           <p className="font-mono" style={{ fontSize: "24px", color: hasDiscount ? c.tanDeep : c.ink }}>
-            {(product.price_cents / 100).toFixed(2)} €
+            {variant ? (variant.price_cents / 100).toFixed(2) : "—"} €
           </p>
         </div>
         {isLowStock && (
@@ -75,23 +75,27 @@ export default function ProductDetail({ product, lowStockThreshold = 3 }) {
           <div className="mb-8">
             <p className="font-mono mb-2.5" style={{ fontSize: "13px", color: c.muted }}>FARBE</p>
             <div className="flex gap-2.5 flex-wrap">
-              {variants.map((v) => (
-                <button
-                  key={v.id}
-                  onClick={() => selectVariant(v.id)}
-                  disabled={v.stock_quantity === 0}
-                  className="px-5 py-2.5 font-mono border transition-colors"
-                  style={{
-                    fontSize: "13px",
-                    borderColor: v.id === selectedVariantId ? c.ink : c.line,
-                    color: v.id === selectedVariantId ? c.ink : c.muted,
-                    opacity: v.stock_quantity === 0 ? 0.4 : 1,
-                    textDecoration: v.stock_quantity === 0 ? "line-through" : "none",
-                  }}
-                >
-                  {v.color_name}
-                </button>
-              ))}
+              {variants.map((v) => {
+                const pricesDiffer = variants.some((other) => other.price_cents !== variants[0].price_cents);
+                return (
+                  <button
+                    key={v.id}
+                    onClick={() => selectVariant(v.id)}
+                    disabled={v.stock_quantity === 0}
+                    className="px-5 py-2.5 font-mono border transition-colors"
+                    style={{
+                      fontSize: "13px",
+                      borderColor: v.id === selectedVariantId ? c.ink : c.line,
+                      color: v.id === selectedVariantId ? c.ink : c.muted,
+                      opacity: v.stock_quantity === 0 ? 0.4 : 1,
+                      textDecoration: v.stock_quantity === 0 ? "line-through" : "none",
+                    }}
+                  >
+                    {v.color_name}
+                    {pricesDiffer && ` — ${(v.price_cents / 100).toFixed(2)} €`}
+                  </button>
+                );
+              })}
             </div>
           </div>
         )}

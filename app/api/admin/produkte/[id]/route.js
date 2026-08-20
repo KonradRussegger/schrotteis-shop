@@ -4,12 +4,12 @@ import { slugify } from "@/lib/slugify";
 
 export async function PUT(request, { params }) {
   const { id } = params;
-  const { name, categoryId, description, material, dimensions, priceCents, originalPriceCents, isNew, variants } =
+  const { name, categoryId, description, material, dimensions, isNew, variants } =
     await request.json();
 
   const supabase = supabaseAdmin();
 
-  // 1. Produktdaten aktualisieren
+  // 1. Produktdaten aktualisieren (Preis liegt jetzt pro Farbvariante)
   const { error: productError } = await supabase
     .from("products")
     .update({
@@ -19,8 +19,6 @@ export async function PUT(request, { params }) {
       description,
       material,
       dimensions,
-      price_cents: priceCents,
-      original_price_cents: originalPriceCents || null,
       is_new: Boolean(isNew),
       updated_at: new Date().toISOString(),
     })
@@ -57,6 +55,8 @@ export async function PUT(request, { params }) {
       color_name: v.colorName,
       color_hex: v.colorHex || null,
       stock_quantity: v.stockQuantity || 0,
+      price_cents: v.priceCents,
+      original_price_cents: v.originalPriceCents || null,
       images: v.images || [],
       updated_at: new Date().toISOString(),
     };

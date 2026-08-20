@@ -10,12 +10,17 @@ const emptyVariant = () => ({
   colorName: "",
   colorHex: "",
   stockQuantity: 0,
+  priceEuro: "",
+  originalPriceEuro: "",
   images: [],
   uploading: false,
 });
 
 // Ein Formular für Anlegen UND Bearbeiten. Ohne initialProduct: Neuanlage.
 // Mit initialProduct: vorbefüllt, sendet PUT statt POST, zeigt Löschen-Button.
+// Preise liegen pro Farbvariante, nicht mehr global am Produkt — verschiedene
+// Farben (z.B. andere Lederart) können unterschiedlich viel kosten und
+// einzeln reduziert werden.
 export default function ProductForm({ categories, initialProduct }) {
   const router = useRouter();
   const isEditing = Boolean(initialProduct);
@@ -25,15 +30,7 @@ export default function ProductForm({ categories, initialProduct }) {
   const [description, setDescription] = useState(initialProduct?.description || "");
   const [material, setMaterial] = useState(initialProduct?.material || "");
   const [dimensions, setDimensions] = useState(initialProduct?.dimensions || "");
-  const [priceEuro, setPriceEuro] = useState(
-    initialProduct ? (initialProduct.price_cents / 100).toFixed(2).replace(".", ",") : ""
-  );
   const [isNew, setIsNew] = useState(initialProduct?.is_new || false);
-  const [originalPriceEuro, setOriginalPriceEuro] = useState(
-    initialProduct?.original_price_cents
-      ? (initialProduct.original_price_cents / 100).toFixed(2).replace(".", ",")
-      : ""
-  );
   const [variants, setVariants] = useState(
     initialProduct?.product_variants?.length
       ? initialProduct.product_variants.map((v) => ({
@@ -41,6 +38,10 @@ export default function ProductForm({ categories, initialProduct }) {
           colorName: v.color_name,
           colorHex: v.color_hex || "",
           stockQuantity: v.stock_quantity,
+          priceEuro: v.price_cents ? (v.price_cents / 100).toFixed(2).replace(".", ",") : "",
+          originalPriceEuro: v.original_price_cents
+            ? (v.original_price_cents / 100).toFixed(2).replace(".", ",")
+            : "",
           images: v.images || [],
           uploading: false,
         }))
@@ -127,27 +128,33 @@ export default function ProductForm({ categories, initialProduct }) {
 
   async function handleSubmit(e) {
     e.preventDefault();
-    setSubmitting(true);
     setError(null);
 
-    const priceCents = Math.round(parseFloat(priceEuro.replace(",", ".")) * 100);
-    const originalPriceCents = originalPriceEuro.trim()
-      ? Math.round(parseFloat(originalPriceEuro.replace(",", ".")) * 100)
-      : null;
+    for (const v of variants) {
+      if (!v.priceEuro.trim()) {
+        setError(`Bitte einen Preis für die Farbe "${v.colorName || "(unbenannt)"}" eintragen.`);
+        return;
+      }
+    }
+
+    setSubmitting(true);
+
     const payload = {
       name,
       categoryId,
       description,
       material,
       dimensions,
-      priceCents,
-      originalPriceCents,
       isNew,
       variants: variants.map((v) => ({
         id: v.id,
         colorName: v.colorName,
         colorHex: v.colorHex,
         stockQuantity: Number(v.stockQuantity) || 0,
+        priceCents: Math.round(parseFloat(v.priceEuro.replace(",", ".")) * 100),
+        originalPriceCents: v.originalPriceEuro.trim()
+          ? Math.round(parseFloat(v.originalPriceEuro.replace(",", ".")) * 100)
+          : null,
         images: v.images,
       })),
     };
@@ -234,30 +241,6 @@ export default function ProductForm({ categories, initialProduct }) {
           </div>
         </div>
 
-        <div>
-          <label className={labelClass}>Preis (€)</label>
-          <input
-            className={inputClass}
-            value={priceEuro}
-            onChange={(e) => setPriceEuro(e.target.value)}
-            placeholder="z. B. 380,00"
-            required
-          />
-        </div>
-
-        <div>
-          <label className={labelClass}>Ursprünglicher Preis (€) — optional</label>
-          <p className="text-muted text-xs mb-1.5">
-            Nur ausfüllen, wenn der Preis reduziert wurde. Zeigt sich im Shop durchgestrichen neben dem aktuellen Preis.
-          </p>
-          <input
-            className={inputClass}
-            value={originalPriceEuro}
-            onChange={(e) => setOriginalPriceEuro(e.target.value)}
-            placeholder="z. B. 450,00"
-          />
-        </div>
-
         <label className="flex items-center gap-2.5 cursor-pointer">
           <input
             type="checkbox"
@@ -271,9 +254,12 @@ export default function ProductForm({ categories, initialProduct }) {
         </label>
       </section>
 
-      {/* Farbvarianten */}
+      {/* Farbvarianten — jede mit eigenem Preis */}
       <section>
-        <h2 className="font-display text-lg font-medium mb-4">Farbvarianten</h2>
+        <h2 className="font-display text-lg font-medium mb-1">Farbvarianten</h2>
+        <p className="text-muted text-xs mb-4">
+          Preis wird pro Farbe festgelegt — unterschiedliche Lederarten oder gezielte Sale-Aktionen sind so möglich.
+        </p>
         <div className="space-y-6">
           {variants.map((variant, i) => (
             <div key={i} className="border border-line rounded-sm p-4 space-y-4">
@@ -309,6 +295,28 @@ export default function ProductForm({ categories, initialProduct }) {
                     className={inputClass}
                     value={variant.stockQuantity}
                     onChange={(e) => updateVariant(i, { stockQuantity: e.target.value })}
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className={labelClass}>Preis (€)</label>
+                  <input
+                    className={inputClass}
+                    value={variant.priceEuro}
+                    onChange={(e) => updateVariant(i, { priceEuro: e.target.value })}
+                    placeholder="z. B. 380,00"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className={labelClass}>Ursprungspreis (€) — optional</label>
+                  <input
+                    className={inputClass}
+                    value={variant.originalPriceEuro}
+                    onChange={(e) => updateVariant(i, { originalPriceEuro: e.target.value })}
+                    placeholder="nur bei Sale"
                   />
                 </div>
               </div>

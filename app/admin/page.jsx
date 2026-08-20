@@ -64,6 +64,15 @@ export default async function AdminPage() {
             const variants = p.product_variants || [];
             const totalStock = variants.reduce((sum, v) => sum + v.stock_quantity, 0);
             const firstImage = variants.find((v) => v.images?.length)?.images?.[0];
+            const prices = variants.map((v) => v.price_cents).filter(Boolean);
+            const minPrice = prices.length ? Math.min(...prices) : null;
+            const maxPrice = prices.length ? Math.max(...prices) : null;
+            const priceLabel =
+              minPrice === null
+                ? "—"
+                : minPrice === maxPrice
+                ? `${(minPrice / 100).toFixed(2)} €`
+                : `${(minPrice / 100).toFixed(2)}–${(maxPrice / 100).toFixed(2)} €`;
             return (
               <tr key={p.id} className="border-b border-line/50">
                 <td className="py-3">
@@ -84,7 +93,7 @@ export default async function AdminPage() {
                   </Link>
                 </td>
                 <td className="py-3 text-muted">{cat?.name || "—"}</td>
-                <td className="py-3 font-mono">{(p.price_cents / 100).toFixed(2)} €</td>
+                <td className="py-3 font-mono">{priceLabel}</td>
                 <td className="py-3 text-muted">
                   {variants.map((v) => v.color_name).join(", ") || "—"}
                 </td>

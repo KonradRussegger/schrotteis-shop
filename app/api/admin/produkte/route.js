@@ -3,19 +3,25 @@ import { supabaseAdmin } from "@/lib/supabase";
 import { slugify } from "@/lib/slugify";
 
 export async function POST(request) {
-  const { name, categoryId, description, material, dimensions, priceCents, originalPriceCents, isNew, variants } =
+  const { name, categoryId, description, material, dimensions, isNew, variants } =
     await request.json();
 
-  if (!name || !priceCents || !variants || variants.length === 0) {
+  if (!name || !variants || variants.length === 0) {
     return NextResponse.json(
-      { error: "Name, Preis und mindestens eine Farbvariante sind erforderlich." },
+      { error: "Name und mindestens eine Farbvariante sind erforderlich." },
+      { status: 400 }
+    );
+  }
+  if (variants.some((v) => !v.priceCents)) {
+    return NextResponse.json(
+      { error: "Jede Farbvariante braucht einen Preis." },
       { status: 400 }
     );
   }
 
   const supabase = supabaseAdmin();
 
-  // 1. Produkt anlegen
+  // 1. Produkt anlegen (Preis liegt jetzt pro Farbvariante, nicht mehr hier)
   const { data: product, error: productError } = await supabase
     .from("products")
     .insert({
@@ -25,8 +31,6 @@ export async function POST(request) {
       description,
       material,
       dimensions,
-      price_cents: priceCents,
-      original_price_cents: originalPriceCents || null,
       is_new: Boolean(isNew),
     })
     .select()
@@ -39,12 +43,14 @@ export async function POST(request) {
     );
   }
 
-  // 2. Farbvarianten anlegen
+  // 2. Farbvarianten anlegen, jede mit eigenem Preis
   const variantRows = variants.map((v) => ({
     product_id: product.id,
     color_name: v.colorName,
     color_hex: v.colorHex || null,
     stock_quantity: v.stockQuantity || 0,
+    price_cents: v.priceCents,
+    original_price_cents: v.originalPriceCents || null,
     images: v.images || [],
   }));
 
