@@ -1,10 +1,7 @@
-import LegalNotice from "@/components/LegalNotice";
-
 export default function ImpressumPage() {
   return (
     <main className="px-6 md:px-12 py-16 max-w-[680px] mx-auto">
       <h1 className="font-display text-3xl font-medium mb-8">Impressum</h1>
-      <LegalNotice />
 
       <div className="text-sm leading-relaxed space-y-4">
         <p>
@@ -23,13 +20,31 @@ export default function ImpressumPage() {
         </p>
 
         <p>
+          Telefon: +43 664 3869893
+          <br />
           E-Mail: info@schrotteis-gwandlstubn.at
         </p>
 
+        <p>
+          <strong>Gewerbeberechtigungen (GISA):</strong>
+          <br />
+          GISA-Zahl 32836639 — Erzeugung von traditionellen Perchtengewändern
+          und -masken (seit 14.07.2020)
+          <br />
+          GISA-Zahl 34137222 — Erzeugung von kunstgewerblichen Zier- und
+          Schmuckgegenständen aus unedlen Metallen, Draht, Gips, Beton, Holz,
+          Horn, Kunststoff, Leder, textilen Materialien (seit 31.08.2021)
+          <br />
+          Standort beider Gewerbe: 5441 Abtenau
+        </p>
+
+        <p>
+          <strong>Mitglied der Wirtschaftskammer Salzburg</strong>
+        </p>
+
         <p className="site-muted">
-          [Platzhalter — noch zu ergänzen: Telefonnummer,
-          Gewerbeberechtigung/-anschrift, GISA-Zahl, zuständige Gewerbebehörde,
-          UID-Nummer, Mitgliedschaft bei der WKO Salzburg]
+          Keine UID-Nummer (Kleinunternehmer gemäß § 6 Abs. 1 Z 27 UStG,
+          keine Umsatzsteuer ausgewiesen).
         </p>
 
         <p>

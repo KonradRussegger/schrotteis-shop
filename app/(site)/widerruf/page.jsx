@@ -1,12 +1,9 @@
-import LegalNotice from "@/components/LegalNotice";
-
 export default function WiderrufPage() {
   return (
     <main className="px-6 md:px-12 py-16 max-w-[680px] mx-auto">
       <h1 className="font-display text-3xl font-medium mb-8">
         Widerrufsrecht
       </h1>
-      <LegalNotice />
 
       <div className="text-sm leading-relaxed space-y-6">
         <section>
@@ -22,9 +19,9 @@ export default function WiderrufPage() {
             <br />
             Matthäus Auer, Schrotteis Gwandlstubn, Schratten 4, 5441 Abtenau
             <br />
-            E-Mail: info@schrotteis-gwandlstubn.at
+            Telefon: +43 664 3869893
             <br />
-            [Platzhalter — Telefonnummer noch ergänzen]
+            E-Mail: info@schrotteis-gwandlstubn.at
             <br />
             mittels einer eindeutigen Erklärung (z. B. per Post oder E-Mail)
             über Ihren Entschluss, diesen Vertrag zu widerrufen, informieren.
@@ -81,10 +78,6 @@ export default function WiderrufPage() {
             ist oder die eindeutig auf Ihre persönlichen Bedürfnisse
             zugeschnitten sind (z. B. individuell angefertigte oder nach Maß
             gefertigte Kostümteile), besteht <strong>kein</strong> Widerrufsrecht.
-            [Platzhalter — im Einzelfall prüfen (lassen), welche Artikel des
-            Sortiments unter diese Ausnahme fallen, und diese im
-            Bestellprozess sowie in der Artikelbeschreibung klar als "vom
-            Widerruf ausgeschlossen" kennzeichnen.]
           </p>
         </section>
       </div>

@@ -1,12 +1,9 @@
-import LegalNotice from "@/components/LegalNotice";
-
 export default function DatenschutzPage() {
   return (
     <main className="px-6 md:px-12 py-16 max-w-[680px] mx-auto">
       <h1 className="font-display text-3xl font-medium mb-8">
         Datenschutzerklärung
       </h1>
-      <LegalNotice />
 
       <div className="text-sm leading-relaxed space-y-6">
         <section>
