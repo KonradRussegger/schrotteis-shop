@@ -45,6 +45,7 @@ export default async function AdminPage() {
           <Link href="/admin/rabattcodes" className="hover:text-tanLight">Rabattcodes →</Link>
           <Link href="/admin/gutscheine" className="hover:text-tanLight">Gutscheine →</Link>
           <Link href="/admin/einstellungen" className="hover:text-tanLight">Einstellungen →</Link>
+          <a href="/api/admin/backup" className="hover:text-tanLight">Backup herunterladen ↓</a>
         </div>
       </div>
 

@@ -23,6 +23,8 @@ Projektgerüst: Next.js (App Router) + Tailwind + Supabase + Mollie + sevDesk.
 - **Rabattcodes** (`/admin/rabattcodes`): Prozent oder Fixbetrag, optionaler Gültigkeitszeitraum, aktivierbar/deaktivierbar
 - **Geschenkgutscheine** (`/gutschein` zum Kauf, `/admin/gutscheine` zur Verwaltung): vereinfachtes Modell — kein Restguthaben, ein Gutschein wird beim Einlösen komplett verbraucht ("alles oder nichts"), auch wenn die Bestellung kleiner ist als der Gutscheinwert. Gutschein-Kauf läuft über denselben Mollie-Checkout wie Produkte. Rabattcode und Gutschein teilen sich dasselbe Eingabefeld im Checkout.
 
+- **Backup-Export**: "Backup herunterladen" im Admin-Hauptmenü lädt eine Excel-Datei mit allen betriebsrelevanten Tabellen (Produkte, Varianten, Kategorien, Bestellungen, Gutscheine, Rabattcodes, Versandoptionen) als einzelne Reiter — jederzeit mit einem Klick, unabhängig von Supabase selbst. Ersetzt kein echtes Datenbank-Backup (dafür Supabase Pro-Plan mit automatischen täglichen Backups), ist aber eine schnelle zusätzliche Absicherung.
+
 ## Was als Nächstes fehlt (bewusst noch offen)
 
 - Eigenes Hero-Video (`public/hero.mp4`) und echte Produktfotos
