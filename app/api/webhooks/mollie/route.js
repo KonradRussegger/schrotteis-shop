@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
 import { mollie } from "@/lib/mollie";
 import { findOrCreateContact, createInvoiceForOrder } from "@/lib/sevdesk";
+import { sendOrderConfirmationEmail, sendVoucherEmail } from "@/lib/resend";
 
 // Mollie ruft diese Route auf, sobald sich der Zahlungsstatus ändert — sowohl
 // für normale Bestellungen als auch für Gutschein-Käufe. Wichtig: dem Payload
@@ -87,6 +88,15 @@ async function handleOrderPayment(supabase, order, payment) {
     console.error("sevDesk-Rechnung fehlgeschlagen:", err);
   }
 
+  // 5. Bestätigungsmail — schlägt sie fehl, bleibt die Bestellung trotzdem
+  //    erfolgreich verbucht; der manuelle "E-Mail vorbereiten"-Button im
+  //    Admin bleibt als Absicherung erhalten.
+  try {
+    await sendOrderConfirmationEmail(order);
+  } catch (err) {
+    console.error("Bestätigungsmail fehlgeschlagen:", err);
+  }
+
   return NextResponse.json({ ok: true });
 }
 
@@ -104,6 +114,12 @@ async function handleVoucherPayment(supabase, voucher, payment) {
     .from("gift_vouchers")
     .update({ status: "active", updated_at: new Date().toISOString() })
     .eq("id", voucher.id);
+
+  try {
+    await sendVoucherEmail(voucher);
+  } catch (err) {
+    console.error("Gutschein-Mail fehlgeschlagen:", err);
+  }
 
   return NextResponse.json({ ok: true });
 }

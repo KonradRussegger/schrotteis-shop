@@ -30,8 +30,8 @@ export default async function BestellungPage({ params }) {
             Danke für deine Bestellung, {order.customer_name.split(" ")[0]}!
           </h1>
           <p style={{ color: c.muted, lineHeight: 1.6 }} className="mb-8">
-            Deine Zahlung ist eingegangen. Wir bereiten deine Bestellung jetzt vor
-            und melden uns bei {order.customer_email}, sobald sie{" "}
+            Deine Zahlung ist eingegangen, eine Bestätigung wurde an {order.customer_email}{" "}
+            geschickt. Wir bereiten deine Bestellung jetzt vor und melden uns nochmal, sobald sie{" "}
             {order.delivery_type === "pickup" ? "abholbereit ist" : "unterwegs ist"}.
           </p>
         </>

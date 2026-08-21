@@ -28,7 +28,7 @@ Projektgerüst: Next.js (App Router) + Tailwind + Supabase + Mollie + sevDesk.
 ## Was als Nächstes fehlt (bewusst noch offen)
 
 - Eigenes Hero-Video (`public/hero.mp4`) und echte Produktfotos
-- Automatischer E-Mail-Versand über Resend (braucht verifizierte Domain, siehe `components/OrderActions.jsx` und `components/VoucherEmailButton.jsx`)
+- **Automatischer E-Mail-Versand** über Resend: Bestellbestätigung, Gutschein-Code und Versandbenachrichtigung gehen automatisch raus (`lib/resend.js`). Braucht `RESEND_API_KEY` und eine bei Resend verifizierte Domain. Die manuellen "E-Mail vorbereiten"-Buttons (`components/OrderActions.jsx`, `components/VoucherEmailButton.jsx`) bleiben als Backup erhalten.
 - sevDesk-Anbindung: Code steht, aber pausiert (kein API-Token hinterlegt)
 - Grafisch gestaltete Gutschein-Vorlage (PDF/Bild) statt reiner Code-Anzeige — aktuell manuell vorstellbar, sobald gewünscht
 - Mehrere Produkte in einem Warenkorb (aktuell: 1 Variante pro Bestellung, MVP)

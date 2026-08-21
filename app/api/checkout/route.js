@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
 import { mollie } from "@/lib/mollie";
 import { findOrCreateContact, createInvoiceForOrder } from "@/lib/sevdesk";
+import { sendOrderConfirmationEmail } from "@/lib/resend";
 
 export async function POST(request) {
   const { variantId, quantity, deliveryType, customer, shippingAddress, code } = await request.json();
@@ -161,6 +162,11 @@ export async function POST(request) {
       await supabase.from("orders").update({ sevdesk_invoice_id: invoice.invoice.id }).eq("id", order.id);
     } catch (err) {
       console.error("sevDesk-Rechnung fehlgeschlagen (durch Gutschein gedeckte Bestellung):", err);
+    }
+    try {
+      await sendOrderConfirmationEmail({ ...order, status: "paid" });
+    } catch (err) {
+      console.error("Bestätigungsmail fehlgeschlagen (durch Gutschein gedeckte Bestellung):", err);
     }
     return NextResponse.json({ checkoutUrl: `${process.env.NEXT_PUBLIC_SITE_URL}/bestellung/${order.id}` });
   }
