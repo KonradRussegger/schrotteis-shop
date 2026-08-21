@@ -15,7 +15,6 @@ export default function Footer() {
           <p style={{ color: c.muted, fontSize: "12px" }}>info@schrotteis-gwandlstubn.at</p>
         </div>
         <div className="flex gap-7 font-mono" style={{ fontSize: "11px", color: c.muted }}>
-          <Link href="/gutschein" className="hover:opacity-70">Gutschein kaufen</Link>
           <Link href="/impressum" className="hover:opacity-70">Impressum</Link>
           <Link href="/agb" className="hover:opacity-70">AGB</Link>
           <Link href="/widerruf" className="hover:opacity-70">Widerrufsrecht</Link>

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { supabaseAdmin } from "@/lib/supabase";
 import ShippingOptionsManager from "@/components/ShippingOptionsManager";
 import LowStockSetting from "@/components/LowStockSetting";
+import VoucherToggleSetting from "@/components/VoucherToggleSetting";
 
 export const dynamic = "force-dynamic";
 export const fetchCache = "force-no-store";
@@ -16,16 +17,23 @@ async function getShippingOptions() {
   return data || [];
 }
 
-async function getLowStockThreshold() {
+async function getSettings() {
   const supabase = supabaseAdmin();
-  const { data } = await supabase.from("shop_settings").select("low_stock_threshold").eq("id", 1).single();
-  return data?.low_stock_threshold ?? 3;
+  const { data } = await supabase
+    .from("shop_settings")
+    .select("low_stock_threshold, voucher_enabled")
+    .eq("id", 1)
+    .single();
+  return {
+    lowStockThreshold: data?.low_stock_threshold ?? 3,
+    voucherEnabled: data?.voucher_enabled ?? true,
+  };
 }
 
 export default async function EinstellungenPage() {
-  const [options, lowStockThreshold] = await Promise.all([
+  const [options, { lowStockThreshold, voucherEnabled }] = await Promise.all([
     getShippingOptions(),
-    getLowStockThreshold(),
+    getSettings(),
   ]);
 
   return (
@@ -39,6 +47,14 @@ export default async function EinstellungenPage() {
       <div className="mt-14 pt-10 border-t border-line">
         <h2 className="font-display text-xl font-medium mb-4">Niedriger Lagerbestand</h2>
         <LowStockSetting initialThreshold={lowStockThreshold} />
+      </div>
+
+      <div className="mt-14 pt-10 border-t border-line">
+        <h2 className="font-display text-xl font-medium mb-2">Geschenkgutschein-Block</h2>
+        <p className="text-muted text-xs mb-4">
+          Steuert, ob der Gutschein-Block am Ende der Shop-Kollektion sichtbar ist.
+        </p>
+        <VoucherToggleSetting initialEnabled={voucherEnabled} />
       </div>
     </main>
   );

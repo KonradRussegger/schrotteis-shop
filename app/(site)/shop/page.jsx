@@ -1,6 +1,7 @@
 import { supabasePublic } from "@/lib/supabase";
 import { theme as c } from "@/lib/theme";
 import ProductCard from "@/components/ProductCard";
+import VoucherCard from "@/components/VoucherCard";
 
 export const dynamic = "force-dynamic";
 export const fetchCache = "force-no-store";
@@ -27,14 +28,24 @@ async function getProducts() {
   }));
 }
 
-async function getLowStockThreshold() {
+async function getSettings() {
   const supabase = supabasePublic();
-  const { data } = await supabase.from("shop_settings").select("low_stock_threshold").eq("id", 1).single();
-  return data?.low_stock_threshold ?? 3;
+  const { data } = await supabase
+    .from("shop_settings")
+    .select("low_stock_threshold, voucher_enabled")
+    .eq("id", 1)
+    .single();
+  return {
+    lowStockThreshold: data?.low_stock_threshold ?? 3,
+    voucherEnabled: data?.voucher_enabled ?? true,
+  };
 }
 
 export default async function ShopPage() {
-  const [products, lowStockThreshold] = await Promise.all([getProducts(), getLowStockThreshold()]);
+  const [products, { lowStockThreshold, voucherEnabled }] = await Promise.all([
+    getProducts(),
+    getSettings(),
+  ]);
 
   return (
     <main className="px-6 md:px-14 py-14">
@@ -48,7 +59,7 @@ export default async function ShopPage() {
         <span>SORTIEREN ▾</span>
       </div>
 
-      {products.length === 0 ? (
+      {products.length === 0 && !voucherEnabled ? (
         <p className="font-mono text-sm" style={{ color: c.muted }}>
           Noch keine Produkte hinterlegt.
         </p>
@@ -57,6 +68,8 @@ export default async function ShopPage() {
           {products.map((p) => (
             <ProductCard key={p.id} product={p} lowStockThreshold={lowStockThreshold} />
           ))}
+          {/* Fix an letzter Stelle, unabhängig von Sortierung/neuen Produkten */}
+          {voucherEnabled && <VoucherCard />}
         </div>
       )}
     </main>
