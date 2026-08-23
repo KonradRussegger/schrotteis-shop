@@ -27,6 +27,8 @@ Projektgerüst: Next.js (App Router) + Tailwind + Supabase + Mollie + sevDesk.
 
 - **Backup-Export**: "Backup herunterladen" im Admin-Hauptmenü lädt eine Excel-Datei mit allen betriebsrelevanten Tabellen (Produkte, Varianten, Kategorien, Bestellungen, Gutscheine, Rabattcodes, Versandoptionen) als einzelne Reiter — jederzeit mit einem Klick, unabhängig von Supabase selbst. Ersetzt kein echtes Datenbank-Backup (dafür Supabase Pro-Plan mit automatischen täglichen Backups), ist aber eine schnelle zusätzliche Absicherung.
 
+- **Keep-Alive-Cron** (`vercel.json` + `app/api/cron/keep-alive`): läuft täglich, verhindert das automatische Pausieren des Supabase-Free-Tier-Projekts nach 7 Tagen Inaktivität — reine Absicherung, keine Funktionsänderung am Shop selbst.
+
 ## Was als Nächstes fehlt (bewusst noch offen)
 
 - Eigenes Hero-Video (`public/hero.mp4`) und echte Produktfotos
