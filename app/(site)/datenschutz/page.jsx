@@ -30,12 +30,29 @@ export default function DatenschutzPage() {
             <li>Mollie B.V. (Zahlungsabwicklung)</li>
             <li>Supabase (Datenbank & Bildspeicher)</li>
             <li>Vercel (Hosting)</li>
+            <li>Resend (Versand automatischer Bestell- und Versandbestätigungen)</li>
             <li>sevDesk (Rechnungsstellung)</li>
           </ul>
           <p className="site-muted mt-3">
             [Platzhalter — für jeden Dienstleister Serverstandort,
             Auftragsverarbeitungsvertrag und Rechtsgrundlage der Übermittlung
             ergänzen, insbesondere bei Verarbeitung außerhalb der EU]
+          </p>
+        </section>
+
+        <section>
+          <h2 className="font-display text-lg mb-2">Cookies</h2>
+          <p className="site-muted">
+            Diese Website setzt derzeit keine Cookies zu Analyse-,
+            Marketing- oder Tracking-Zwecken ein — es findet keine
+            Nutzeranalyse (z. B. Google Analytics) und kein Werbe-Tracking
+            statt. Beim Bezahlvorgang werden Sie auf die Zahlungsseite
+            unseres Zahlungsdienstleisters Mollie B.V. weitergeleitet; dort
+            gesetzte Cookies unterliegen der Cookie- bzw. Datenschutzrichtlinie
+            von Mollie und liegen außerhalb unseres Einflussbereichs. Sollten
+            wir künftig Analyse- oder Marketing-Cookies einsetzen, werden wir
+            zuvor Ihre Einwilligung einholen und diese Erklärung entsprechend
+            aktualisieren.
           </p>
         </section>
 
