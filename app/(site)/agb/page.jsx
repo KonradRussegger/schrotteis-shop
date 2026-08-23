@@ -1,12 +1,26 @@
-import LegalNotice from "@/components/LegalNotice";
+import { supabasePublic } from "@/lib/supabase";
 
-export default function AGBPage() {
+export const dynamic = "force-dynamic";
+export const fetchCache = "force-no-store";
+export const revalidate = 0;
+
+async function getShippingOptions() {
+  const supabase = supabasePublic();
+  const { data } = await supabase
+    .from("shipping_options")
+    .select("*")
+    .order("sort_order", { ascending: true });
+  return data || [];
+}
+
+export default async function AGBPage() {
+  const shippingOptions = await getShippingOptions();
+
   return (
     <main className="px-6 md:px-12 py-16 max-w-[680px] mx-auto">
       <h1 className="font-display text-3xl font-medium mb-8">
         Allgemeine Geschäftsbedingungen
       </h1>
-      <LegalNotice />
 
       <div className="text-sm leading-relaxed space-y-6">
         <section>
@@ -64,9 +78,32 @@ export default function AGBPage() {
 
         <section>
           <h2 className="font-display text-lg mb-2">4. Versand</h2>
+          <p className="site-muted mb-3">
+            Wir liefern in die unten angeführten Länder. Die jeweils
+            aktuellen Versandkosten werden im Bestellprozess vor Abschluss
+            der Bestellung angezeigt und sind zudem hier ersichtlich:
+          </p>
+          {shippingOptions.length > 0 && (
+            <table style={{ width: "100%", borderCollapse: "collapse" }} className="mb-3">
+              <tbody>
+                {shippingOptions.map((o) => (
+                  <tr key={o.country_code} style={{ borderBottom: "1px solid #E8E3DA" }}>
+                    <td className="site-muted" style={{ padding: "6px 0" }}>{o.country_name}</td>
+                    <td style={{ padding: "6px 0", textAlign: "right" }}>
+                      {(o.shipping_cost_cents / 100).toFixed(2)} €
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
           <p className="site-muted">
-            [Platzhalter — Versandkosten, Liefergebiete, Lieferzeiten
-            ergänzen]
+            Alternativ ist eine kostenlose Selbstabholung am Betriebsstandort
+            in 5441 Abtenau möglich. Die Lieferzeit innerhalb Österreichs
+            beträgt in der Regel 3–7 Werktage nach Zahlungseingang; bei
+            individuell gefertigten Stücken kann sich die Lieferzeit
+            entsprechend verlängern, worauf im Bestellprozess gesondert
+            hingewiesen wird.
           </p>
         </section>
 
