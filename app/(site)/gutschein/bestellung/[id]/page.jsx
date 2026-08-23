@@ -2,10 +2,13 @@ import { supabaseAdmin } from "@/lib/supabase";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { theme as c } from "@/lib/theme";
+import AutoRefresh from "@/components/AutoRefresh";
 
 export const dynamic = "force-dynamic";
 export const fetchCache = "force-no-store";
 export const revalidate = 0;
+
+const MAX_AUTO_REFRESH_ATTEMPTS = 15;
 
 async function getVoucher(id) {
   const supabase = supabaseAdmin();
@@ -13,11 +16,12 @@ async function getVoucher(id) {
   return data;
 }
 
-export default async function GutscheinBestellungPage({ params }) {
+export default async function GutscheinBestellungPage({ params, searchParams }) {
   const voucher = await getVoucher(params.id);
   if (!voucher) notFound();
 
   const isPaid = voucher.status === "active" || voucher.status === "redeemed";
+  const attempt = parseInt(searchParams?.check || "0", 10);
 
   return (
     <main className="px-6 md:px-14 py-20 max-w-[520px] mx-auto text-center">
@@ -50,14 +54,19 @@ export default async function GutscheinBestellungPage({ params }) {
         </>
       ) : (
         <>
+          {attempt < MAX_AUTO_REFRESH_ATTEMPTS && (
+            <AutoRefresh nextHref={`/gutschein/bestellung/${voucher.id}?check=${attempt + 1}`} delayMs={2000} />
+          )}
           <p className="font-mono tracking-[0.2em] mb-4" style={{ fontSize: "12px", color: c.muted }}>
-            ZAHLUNG NOCH OFFEN
+            ZAHLUNG WIRD BESTÄTIGT …
           </p>
           <h1 className="font-display font-medium mb-5" style={{ fontSize: "26px", color: c.ink }}>
-            Gutschein {voucher.id.slice(0, 8)}
+            Einen Moment noch
           </h1>
           <p style={{ color: c.muted, lineHeight: 1.6 }}>
-            Die Zahlung wurde noch nicht bestätigt. Lade diese Seite in ein paar Sekunden neu.
+            {attempt < MAX_AUTO_REFRESH_ATTEMPTS
+              ? "Die Seite aktualisiert sich automatisch, sobald deine Zahlung bestätigt ist."
+              : "Das dauert gerade länger als gewöhnlich — bitte lade die Seite in Kürze nochmal manuell neu."}
           </p>
         </>
       )}

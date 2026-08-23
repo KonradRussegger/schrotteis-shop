@@ -19,7 +19,9 @@ Projektgerüst: Next.js (App Router) + Tailwind + Supabase + Mollie + sevDesk.
 - **Design**: helles Espresso-Leder-Farbschema (Kundenseiten + Admin einheitlich), eigenes Logo, Instagram/E-Mail im Header
 - **Abholung/Versand** im Checkout, Versandkosten nach Land im Admin konfigurierbar (`/admin/einstellungen`)
 - **Niedriger Lagerbestand**: einstellbare Schwelle, zeigt "Nur noch X Stück" im Shop
-- **Bestellabwicklung**: "Als versendet/abgeholt markieren" setzt den Status, E-Mail-Entwurf per Mailto-Link (Übergangslösung bis Resend mit eigener Domain eingerichtet ist)
+- **Bestellabwicklung**: "Als versendet/abgeholt markieren" setzt den Status, optionale Trackingnummer-Eingabe. Rechnung (aus sevDesk manuell exportiert, **keine** API-Anbindung) wird pro Bestellung als PDF hochgeladen und automatisch an die Versandmail angehängt. E-Mail-Entwurf per Mailto-Link bleibt als Backup.
+- **Checkout**: Live-Preisvorschau (Zwischensumme/Rabatt/Versand/Gesamt) nach Eingabe eines Gutschein- oder Rabattcodes; Bestätigungsseiten aktualisieren sich automatisch alle 2 Sekunden, bis die Zahlung bestätigt ist
+- **AGB & Widerrufsrecht**: Vertragsabschluss-Klausel und Muster-Widerrufsformular ergänzt
 - **Rabattcodes** (`/admin/rabattcodes`): Prozent oder Fixbetrag, optionaler Gültigkeitszeitraum, aktivierbar/deaktivierbar
 - **Geschenkgutscheine** (`/gutschein` zum Kauf, `/admin/gutscheine` zur Verwaltung): vereinfachtes Modell — kein Restguthaben, ein Gutschein wird beim Einlösen komplett verbraucht ("alles oder nichts"), auch wenn die Bestellung kleiner ist als der Gutscheinwert. Gutschein-Kauf läuft über denselben Mollie-Checkout wie Produkte. Rabattcode und Gutschein teilen sich dasselbe Eingabefeld im Checkout.
 

@@ -14,13 +14,28 @@ async function getShippingOptions() {
   return data || [];
 }
 
+async function getVariant(variantId) {
+  if (!variantId) return null;
+  const supabase = supabasePublic();
+  const { data } = await supabase
+    .from("product_variants")
+    .select("id, price_cents, color_name")
+    .eq("id", variantId)
+    .single();
+  return data;
+}
+
 export default async function CheckoutPage({ searchParams }) {
-  const shippingOptions = await getShippingOptions();
+  const [shippingOptions, variant] = await Promise.all([
+    getShippingOptions(),
+    getVariant(searchParams?.variant),
+  ]);
 
   return (
     <CheckoutForm
       variantId={searchParams?.variant}
       shippingOptions={shippingOptions}
+      productSubtotalCents={variant?.price_cents ?? 0}
     />
   );
 }

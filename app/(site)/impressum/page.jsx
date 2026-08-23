@@ -28,12 +28,9 @@ export default function ImpressumPage() {
         <p>
           <strong>Gewerbeberechtigungen (GISA):</strong>
           <br />
-          GISA-Zahl 32836639 — Erzeugung von traditionellen Perchtengewändern
-          und -masken (seit 14.07.2020)
+          GISA-Zahl 32836639
           <br />
-          GISA-Zahl 34137222 — Erzeugung von kunstgewerblichen Zier- und
-          Schmuckgegenständen aus unedlen Metallen, Draht, Gips, Beton, Holz,
-          Horn, Kunststoff, Leder, textilen Materialien (seit 31.08.2021)
+          GISA-Zahl 34137222
           <br />
           Standort beider Gewerbe: 5441 Abtenau
         </p>
@@ -49,7 +46,11 @@ export default function ImpressumPage() {
 
         <p>
           <strong>Unternehmensgegenstand:</strong> Herstellung und Verkauf
-          handgefertigter Lederwaren und Kostümteile (Fellausstattung)
+          handgefertigter Lederwaren und Kostümteile (Fellausstattung) —
+          im Einzelnen: Erzeugung von traditionellen Perchtengewändern und
+          -masken sowie Erzeugung von kunstgewerblichen Zier- und
+          Schmuckgegenständen aus unedlen Metallen, Draht, Gips, Beton, Holz,
+          Horn, Kunststoff, Leder und textilen Materialien.
         </p>
 
         <p>

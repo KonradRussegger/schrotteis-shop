@@ -2,10 +2,13 @@ import { supabaseAdmin } from "@/lib/supabase";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { theme as c } from "@/lib/theme";
+import AutoRefresh from "@/components/AutoRefresh";
 
 export const dynamic = "force-dynamic";
 export const fetchCache = "force-no-store";
 export const revalidate = 0;
+
+const MAX_AUTO_REFRESH_ATTEMPTS = 15; // ca. 30 Sekunden bei 2s-Intervall
 
 async function getOrder(id) {
   const supabase = supabaseAdmin();
@@ -13,11 +16,12 @@ async function getOrder(id) {
   return data;
 }
 
-export default async function BestellungPage({ params }) {
+export default async function BestellungPage({ params, searchParams }) {
   const order = await getOrder(params.id);
   if (!order) notFound();
 
   const isPaid = order.status === "paid" || order.status === "shipped";
+  const attempt = parseInt(searchParams?.check || "0", 10);
 
   return (
     <main className="px-6 md:px-14 py-20 max-w-[560px] mx-auto text-center">
@@ -37,16 +41,19 @@ export default async function BestellungPage({ params }) {
         </>
       ) : (
         <>
+          {attempt < MAX_AUTO_REFRESH_ATTEMPTS && (
+            <AutoRefresh nextHref={`/bestellung/${order.id}?check=${attempt + 1}`} delayMs={2000} />
+          )}
           <p className="font-mono tracking-[0.2em] mb-4" style={{ fontSize: "12px", color: c.muted }}>
-            ZAHLUNG NOCH OFFEN
+            ZAHLUNG WIRD BESTÄTIGT …
           </p>
           <h1 className="font-display font-medium mb-5" style={{ fontSize: "30px", color: c.ink }}>
-            Bestellung {order.id.slice(0, 8)}
+            Einen Moment noch
           </h1>
           <p style={{ color: c.muted, lineHeight: 1.6 }} className="mb-8">
-            Deine Zahlung wurde noch nicht bestätigt. Falls du die Zahlung
-            gerade abgeschlossen hast, lade diese Seite in ein paar Sekunden
-            neu — die Bestätigung kann kurz dauern.
+            {attempt < MAX_AUTO_REFRESH_ATTEMPTS
+              ? "Die Seite aktualisiert sich automatisch, sobald deine Zahlung bestätigt ist."
+              : "Das dauert gerade länger als gewöhnlich — bitte lade die Seite in Kürze nochmal manuell neu."}
           </p>
         </>
       )}

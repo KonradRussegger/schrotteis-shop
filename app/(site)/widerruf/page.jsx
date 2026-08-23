@@ -80,6 +80,35 @@ export default function WiderrufPage() {
             gefertigte Kostümteile), besteht <strong>kein</strong> Widerrufsrecht.
           </p>
         </section>
+
+        <section>
+          <h2 className="font-display text-lg mb-2">Muster-Widerrufsformular</h2>
+          <p className="site-muted italic">
+            (Wenn Sie den Vertrag widerrufen wollen, füllen Sie bitte dieses
+            Formular aus und senden Sie es zurück.)
+          </p>
+          <div className="mt-4 p-5" style={{ border: "1px solid #E8E3DA" }}>
+            <p className="mb-4">
+              An: Matthäus Auer, Schrotteis Gwandlstubn, Schratten 4, 5441
+              Abtenau, info@schrotteis-gwandlstubn.at
+            </p>
+            <p className="mb-4">
+              Hiermit widerrufe(n) ich/wir den von mir/uns abgeschlossenen
+              Vertrag über den Kauf der folgenden Waren:
+            </p>
+            <p className="mb-2">_________________________________________________</p>
+            <p className="mb-4">Bestellt am: _______ / erhalten am: _______</p>
+            <p className="mb-2">Name des/der Verbraucher(s):</p>
+            <p className="mb-4">_________________________________________________</p>
+            <p className="mb-2">Anschrift des/der Verbraucher(s):</p>
+            <p className="mb-4">_________________________________________________</p>
+            <p className="mb-2">
+              Unterschrift des/der Verbraucher(s) (nur bei Mitteilung auf Papier):
+            </p>
+            <p className="mb-4">_________________________________________________</p>
+            <p>Datum: _______</p>
+          </div>
+        </section>
       </div>
     </main>
   );

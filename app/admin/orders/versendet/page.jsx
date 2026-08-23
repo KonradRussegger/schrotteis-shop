@@ -70,6 +70,12 @@ export default async function VersendeteBestellungenPage() {
                     {order.shipping_address?.zip} {order.shipping_address?.city}
                     <br />
                     {countryName}
+                    {order.tracking_number && (
+                      <>
+                        <br />
+                        <span className="text-muted">Sendungsnummer:</span> {order.tracking_number}
+                      </>
+                    )}
                   </>
                 )}
               </p>

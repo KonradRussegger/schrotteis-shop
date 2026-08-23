@@ -4,15 +4,50 @@ import { useState } from "react";
 import { theme as c } from "@/lib/theme";
 
 // Vereinfachtes Checkout-Formular für ein einzelnes Produkt (MVP).
-export default function CheckoutForm({ variantId, shippingOptions }) {
+export default function CheckoutForm({ variantId, shippingOptions, productSubtotalCents }) {
   const [deliveryType, setDeliveryType] = useState("shipping"); // "shipping" | "pickup"
   const [countryCode, setCountryCode] = useState(shippingOptions[0]?.country_code || "");
   const [form, setForm] = useState({ name: "", email: "", street: "", zip: "", city: "" });
   const [code, setCode] = useState("");
+  const [appliedDiscount, setAppliedDiscount] = useState(null); // { discountAmountCents, label }
+  const [codeChecking, setCodeChecking] = useState(false);
+  const [codeError, setCodeError] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   const selectedShipping = shippingOptions.find((o) => o.country_code === countryCode);
+  const shippingCostCents = deliveryType === "shipping" ? (selectedShipping?.shipping_cost_cents ?? 0) : 0;
+  const discountAmountCents = appliedDiscount?.discountAmountCents ?? 0;
+  const finalTotalCents = Math.max(0, productSubtotalCents - discountAmountCents) + shippingCostCents;
+
+  async function handleApplyCode() {
+    if (!code.trim()) return;
+    setCodeChecking(true);
+    setCodeError(null);
+    setAppliedDiscount(null);
+
+    try {
+      const res = await fetch("/api/checkout/rabatt-pruefen", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code, productSubtotalCents }),
+      });
+      const body = await res.json();
+      if (!res.ok) throw new Error(body.error || "Code ungültig.");
+      setAppliedDiscount(body);
+    } catch (err) {
+      setCodeError(err.message);
+    } finally {
+      setCodeChecking(false);
+    }
+  }
+
+  function handleCodeChange(value) {
+    setCode(value);
+    // Vorschau verwerfen, sobald der Code geändert wird — erst mit "Anwenden" neu geprüft
+    if (appliedDiscount) setAppliedDiscount(null);
+    if (codeError) setCodeError(null);
+  }
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -32,7 +67,7 @@ export default function CheckoutForm({ variantId, shippingOptions }) {
             deliveryType === "shipping"
               ? { street: form.street, zip: form.zip, city: form.city, country: countryCode }
               : null,
-          code: code.trim() || undefined,
+          code: appliedDiscount ? code.trim() : undefined,
         }),
       });
 
@@ -136,14 +171,56 @@ export default function CheckoutForm({ variantId, shippingOptions }) {
 
         <div>
           <label className="font-mono block mb-1.5" style={labelStyle}>GUTSCHEIN- ODER RABATTCODE — OPTIONAL</label>
-          <input
-            className={inputClass}
-            style={inputStyle}
-            value={code}
-            onChange={(e) => setCode(e.target.value)}
-            placeholder="z. B. SOMMER20"
-          />
+          <div className="flex gap-2">
+            <input
+              className={inputClass}
+              style={inputStyle}
+              value={code}
+              onChange={(e) => handleCodeChange(e.target.value)}
+            />
+            <button
+              type="button"
+              onClick={handleApplyCode}
+              disabled={!code.trim() || codeChecking}
+              className="font-mono px-4 whitespace-nowrap"
+              style={{ fontSize: "12px", border: `1px solid ${c.ink}`, color: c.ink, opacity: !code.trim() || codeChecking ? 0.5 : 1 }}
+            >
+              {codeChecking ? "…" : "Anwenden"}
+            </button>
+          </div>
+          {codeError && <p className="text-xs mt-1.5" style={{ color: "#B03A2C" }}>{codeError}</p>}
+          {appliedDiscount && (
+            <p className="text-xs mt-1.5" style={{ color: c.tanDeep }}>
+              "{appliedDiscount.label}" angewendet — −{(appliedDiscount.discountAmountCents / 100).toFixed(2)} €
+            </p>
+          )}
         </div>
+
+        {/* Preisaufschlüsselung — aktualisiert sich live mit Land/Rabatt */}
+        {productSubtotalCents > 0 && (
+          <div className="text-sm space-y-1.5 pt-2" style={{ borderTop: `1px solid ${c.line}` }}>
+            <div className="flex justify-between" style={{ color: c.muted }}>
+              <span>Zwischensumme</span>
+              <span className="font-mono">{(productSubtotalCents / 100).toFixed(2)} €</span>
+            </div>
+            {discountAmountCents > 0 && (
+              <div className="flex justify-between" style={{ color: c.tanDeep }}>
+                <span>Rabatt</span>
+                <span className="font-mono">−{(discountAmountCents / 100).toFixed(2)} €</span>
+              </div>
+            )}
+            {deliveryType === "shipping" && (
+              <div className="flex justify-between" style={{ color: c.muted }}>
+                <span>Versand</span>
+                <span className="font-mono">{(shippingCostCents / 100).toFixed(2)} €</span>
+              </div>
+            )}
+            <div className="flex justify-between pt-1.5" style={{ color: c.ink, fontWeight: 600, borderTop: `1px solid ${c.line}` }}>
+              <span>Gesamt</span>
+              <span className="font-mono">{(finalTotalCents / 100).toFixed(2)} €</span>
+            </div>
+          </div>
+        )}
 
         {error && <p className="text-sm" style={{ color: "#B03A2C" }}>{error}</p>}
 
