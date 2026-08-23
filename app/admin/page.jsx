@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { supabaseAdmin } from "@/lib/supabase";
+import HelpButton from "@/components/HelpButton";
 
 export const dynamic = "force-dynamic";
 export const fetchCache = "force-no-store"; // verhindert jede Zwischenspeicherung, auch auf Infrastrukturebene
@@ -48,6 +49,8 @@ export default async function AdminPage() {
           <a href="/api/admin/backup" className="hover:text-tanLight">Backup herunterladen ↓</a>
         </div>
       </div>
+
+      <HelpButton topic="uebersicht" />
 
       <table className="w-full text-sm">
         <thead>

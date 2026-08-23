@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { supabaseAdmin } from "@/lib/supabase";
 import AddCategoryForm from "@/components/AddCategoryForm";
+import HelpButton from "@/components/HelpButton";
 
 export const dynamic = "force-dynamic";
 export const fetchCache = "force-no-store";
@@ -20,7 +21,8 @@ export default async function KategorienPage() {
       <Link href="/admin" className="font-mono text-xs text-muted hover:text-tanLight">
         ← Zurück zur Übersicht
       </Link>
-      <h1 className="font-display text-3xl font-medium mt-4 mb-8">Kategorien</h1>
+      <h1 className="font-display text-3xl font-medium mt-4 mb-4">Kategorien</h1>
+      <HelpButton topic="kategorien" />
 
       <ul className="mb-10 space-y-2">
         {categories.map((c) => (

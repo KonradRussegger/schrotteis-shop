@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { supabaseAdmin } from "@/lib/supabase";
 import ProductForm from "@/components/ProductForm";
+import HelpButton from "@/components/HelpButton";
 
 export const dynamic = "force-dynamic";
 
@@ -18,7 +19,8 @@ export default async function NeuesProduktPage() {
       <Link href="/admin" className="font-mono text-xs text-muted hover:text-tanLight">
         ← Zurück zur Übersicht
       </Link>
-      <h1 className="font-display text-3xl font-medium mt-4 mb-10">Neues Produkt</h1>
+      <h1 className="font-display text-3xl font-medium mt-4 mb-4">Neues Produkt</h1>
+      <HelpButton topic="produktFormular" />
       <ProductForm categories={categories} />
     </main>
   );

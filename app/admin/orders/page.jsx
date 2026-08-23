@@ -2,6 +2,7 @@ import Link from "next/link";
 import { supabaseAdmin } from "@/lib/supabase";
 import CopyAddressButton from "@/components/CopyAddressButton";
 import OrderActions from "@/components/OrderActions";
+import HelpButton from "@/components/HelpButton";
 
 export const dynamic = "force-dynamic";
 export const fetchCache = "force-no-store";
@@ -42,6 +43,8 @@ export default async function OrdersPage() {
           Versendete Bestellungen →
         </Link>
       </div>
+
+      <HelpButton topic="bestellungenOffen" />
 
       {orders.length === 0 && (
         <p className="text-muted font-mono text-sm">Aktuell keine offenen Bestellungen.</p>

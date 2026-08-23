@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { supabaseAdmin } from "@/lib/supabase";
+import HelpButton from "@/components/HelpButton";
 
 export const dynamic = "force-dynamic";
 export const fetchCache = "force-no-store";
@@ -37,6 +38,8 @@ export default async function VersendeteBestellungenPage() {
           <p className="text-muted text-sm mb-10">{orders.length} bereits versendet/abgeholt</p>
         </div>
       </div>
+
+      <HelpButton topic="bestellungenVersendet" />
 
       {orders.length === 0 && (
         <p className="text-muted font-mono text-sm">Noch keine Bestellung als versendet markiert.</p>

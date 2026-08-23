@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { supabaseAdmin } from "@/lib/supabase";
 import DiscountCodesManager from "@/components/DiscountCodesManager";
+import HelpButton from "@/components/HelpButton";
 
 export const dynamic = "force-dynamic";
 export const fetchCache = "force-no-store";
@@ -20,7 +21,8 @@ export default async function RabattcodesPage() {
       <Link href="/admin" className="font-mono text-xs text-muted hover:text-tanLight">
         ← Zurück zur Übersicht
       </Link>
-      <h1 className="font-display text-3xl font-medium mt-4 mb-10">Rabattcodes</h1>
+      <h1 className="font-display text-3xl font-medium mt-4 mb-4">Rabattcodes</h1>
+      <HelpButton topic="rabattcodes" />
       <DiscountCodesManager initialCodes={codes} />
     </main>
   );

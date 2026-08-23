@@ -3,6 +3,7 @@ import { supabaseAdmin } from "@/lib/supabase";
 import ShippingOptionsManager from "@/components/ShippingOptionsManager";
 import LowStockSetting from "@/components/LowStockSetting";
 import VoucherToggleSetting from "@/components/VoucherToggleSetting";
+import HelpButton from "@/components/HelpButton";
 
 export const dynamic = "force-dynamic";
 export const fetchCache = "force-no-store";
@@ -41,7 +42,8 @@ export default async function EinstellungenPage() {
       <Link href="/admin" className="font-mono text-xs text-muted hover:text-tanLight">
         ← Zurück zur Übersicht
       </Link>
-      <h1 className="font-display text-3xl font-medium mt-4 mb-10">Versandkosten nach Land</h1>
+      <h1 className="font-display text-3xl font-medium mt-4 mb-4">Versandkosten nach Land</h1>
+      <HelpButton topic="einstellungen" />
       <ShippingOptionsManager initialOptions={options} />
 
       <div className="mt-14 pt-10 border-t border-line">

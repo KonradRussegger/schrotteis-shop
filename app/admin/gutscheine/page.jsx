@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { supabaseAdmin } from "@/lib/supabase";
 import VoucherEmailButton from "@/components/VoucherEmailButton";
+import HelpButton from "@/components/HelpButton";
 
 export const dynamic = "force-dynamic";
 export const fetchCache = "force-no-store";
@@ -31,7 +32,8 @@ export default async function GutscheinePage() {
         ← Zurück zur Übersicht
       </Link>
       <h1 className="font-display text-3xl font-medium mt-4 mb-2">Geschenkgutscheine</h1>
-      <p className="text-muted text-sm mb-10">{vouchers.length} gekauft</p>
+      <p className="text-muted text-sm mb-4">{vouchers.length} gekauft</p>
+      <HelpButton topic="gutscheine" />
 
       {vouchers.length === 0 && (
         <p className="text-muted font-mono text-sm">Noch kein Gutschein gekauft.</p>
